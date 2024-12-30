@@ -21,6 +21,7 @@ public class DomainWhiteListInterceptor implements HandlerInterceptor {
             "app-force-1035--partial.sandbox.my.salesforce.com"
     );
 
+    // TODO : API Key값도 추가해야함
     @Override
     @SuppressWarnings("null")
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

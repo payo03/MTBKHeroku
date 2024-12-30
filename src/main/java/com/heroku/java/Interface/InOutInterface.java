@@ -22,7 +22,7 @@ public class InOutInterface {
     public Map<String, Object> kakaoAlim(@RequestParam Map<String, Object> infoMap) {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         resultMap.put("code", true);
-        resultMap.put("message", "Great. you\'ve got " + Integer.valueOf(String.valueOf(Math.random()*10)) + " points");
+        resultMap.put("message", "Great. you\'ve got " + ((int) (Math.random() * 100)) + " points");
         resultMap.put("infoMap : ", infoMap);
 
         /*
