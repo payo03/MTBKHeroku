@@ -15,6 +15,6 @@ public class WebConfig implements WebMvcConfigurer {
     @SuppressWarnings("null")
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(domainWhitelistInterceptor)
-                .addPathPatterns("/**"); // 모든 경로에 대해 적용 
+                .addPathPatterns("/**"); // 모든 경로에 대해 적용
     }
 }
