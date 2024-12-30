@@ -18,7 +18,7 @@ public class DomainWhiteListInterceptor implements HandlerInterceptor {
     private static final List<String> DOMAIN_WHITE_LIST = List.of(
             "localhost",
             "mtbk-heroku-interface-9a1b73db0729.herokuapp.com",
-            "app-force-1035--partial.sandbox.my.salesforce.com",
+            "app-force-1035--partial.sandbox.my.salesforce.com"
     );
 
     @Override
@@ -33,7 +33,7 @@ public class DomainWhiteListInterceptor implements HandlerInterceptor {
             logger.info(requestDomain);
             logger.debug(requestDomain);
 
-            return false;
+            return true;    // TODO : false로 변경필요
         }
 
         return true; // 허용된 요청만 처리
