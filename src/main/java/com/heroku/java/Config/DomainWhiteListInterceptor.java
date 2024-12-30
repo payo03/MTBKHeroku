@@ -2,6 +2,8 @@ package com.heroku.java.Config;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -10,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class DomainWhiteListInterceptor implements HandlerInterceptor {
+    private static final Logger logger = LogManager.getLogger(DomainWhiteListInterceptor.class);
 
     // 허용된 도메인 리스트
     private static final List<String> DOMAIN_WHITE_LIST = List.of(
@@ -26,7 +29,8 @@ public class DomainWhiteListInterceptor implements HandlerInterceptor {
         if (!DOMAIN_WHITE_LIST.contains(requestDomain)) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.getWriter().write("Forbidden: Invalid domain");
-            System.out.println(requestDomain);
+            logger.info(requestDomain);
+            logger.debug(requestDomain);
 
             return false;
         }
