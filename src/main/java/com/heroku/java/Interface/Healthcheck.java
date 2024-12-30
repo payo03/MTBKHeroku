@@ -1,19 +1,16 @@
 package com.heroku.java.Interface;
 
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
-@RequestMapping("/api")
-public class InboundInterface {
+public class Healthcheck {
 
-    @GetMapping("/receive")
-    public String receive() {
+    @GetMapping("/healthcheck")
+    public String healthcheck() {
         return "Hello from Spring Boot! / " + LocalDateTime.now();
     }
     
