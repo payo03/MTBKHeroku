@@ -8,13 +8,12 @@ import java.time.LocalDateTime;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
 @RestController
 @RequestMapping("/api")
-public class HealthCheck {
+public class InboundInterface {
 
     @GetMapping("/healthcheck")
-    public String sayHello() {
+    public String healthcheck() {
         return "Hello from Spring Boot! / " + LocalDateTime.now();
     }
     
