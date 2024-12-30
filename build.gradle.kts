@@ -16,10 +16,4 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
-    implementation("org.springframework.boot:spring-boot-starter-log4j2")
-
-    // Logback 제거
-    implementation("org.springframework.boot:spring-boot-starter") {
-        exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging")
-    }
 }
