@@ -17,7 +17,8 @@ public class DomainWhiteListInterceptor implements HandlerInterceptor {
     // 허용된 도메인 리스트
     private static final List<String> DOMAIN_WHITE_LIST = List.of(
             "localhost",
-            "https://app-force-1035--partial.sandbox.my.salesforce.com"
+            "https://app-force-1035--partial.sandbox.my.salesforce.com",
+            "https://mtbk-heroku-interface-9a1b73db0729.herokuapp.com"
     );
 
     @Override
