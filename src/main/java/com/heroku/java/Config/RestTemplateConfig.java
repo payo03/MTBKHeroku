@@ -1,8 +1,9 @@
 package com.heroku.java.Config;
 
-import java.io.*;
 import java.net.*;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -10,6 +11,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class RestTemplateConfig {
+    private static final Logger logger = LogManager.getLogger(RestTemplateConfig.class);
 
     @Bean
     public RestTemplate restTemplate() {
@@ -37,7 +39,10 @@ public class RestTemplateConfig {
             SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
             factory.setProxy(proxy);
 
-            return new RestTemplate(factory);
+            RestTemplate template = new RestTemplate(factory);
+            logger.info(template.getForObject("http://ip.quotaguard.com", String.class));
+            
+            return template;
         } catch (Exception e) {
             throw new RuntimeException("Failed to configure RestTemplate with Quotaguard proxy.", e);
         }
