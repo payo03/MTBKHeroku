@@ -18,12 +18,11 @@ public class DomainWhiteListInterceptor implements HandlerInterceptor {
 
     // 허용된 도메인 리스트
     String myEnv = Optional.ofNullable(System.getenv("MY_ENV_VAR"))
-                       .orElse("default_value");
+                            .orElse("default_value");
     private static final List<String> DOMAIN_WHITE_LIST = Arrays.asList(
         Optional.ofNullable(System.getenv("DOMAIN_WHITE_LIST")).orElse("localhost").split(",")
     );
 
-    // TODO : API Key값도 추가해야함
     @Override
     @SuppressWarnings("null")
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -36,7 +35,7 @@ public class DomainWhiteListInterceptor implements HandlerInterceptor {
             logger.info(requestDomain);
             logger.debug(requestDomain);
 
-            return true;    // TODO : false로 변경필요
+            return false;
         }
 
         return true; // 허용된 요청만 처리

@@ -11,10 +11,16 @@ public class WebConfig implements WebMvcConfigurer {
     @Autowired
     private DomainWhiteListInterceptor domainWhitelistInterceptor;
 
+    @Autowired
+    private APIRequestInterceptor apiRequestInterceptor;
+
     @Override
     @SuppressWarnings("null")
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(domainWhitelistInterceptor)
                 .addPathPatterns("/**"); // 모든 경로에 대해 적용
+
+        registry.addInterceptor(apiRequestInterceptor)
+                .addPathPatterns("/api/**"); // API 호출경로에 대해 적용
     }
 }

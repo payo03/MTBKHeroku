@@ -1,7 +1,6 @@
 package com.heroku.java.Config;
 
 import java.net.*;
-import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
