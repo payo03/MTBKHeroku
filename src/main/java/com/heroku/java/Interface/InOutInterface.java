@@ -2,12 +2,18 @@ package com.heroku.java.Interface;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,6 +22,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/api")
 public class InOutInterface {
     private static final Logger logger = LogManager.getLogger(InOutInterface.class);
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     @PostMapping("/kakao/alim")
     public Map<String, Object> kakaoAlim(@RequestParam Map<String, Object> infoMap) {
@@ -28,7 +37,25 @@ public class InOutInterface {
             Kakaotalk API 호출
         */
 
-        logger.info(infoMap);
+        String url = "https://pe86m3.api-id.infobip.com/kakao-alim/1/messages";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Accept", "application/json");
+        headers.set("Authorization", "App ca9697740134af524df3d4a4cf702337-e938db19-144d-4a33-90d0-fb349dae8c2d");
+
+        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(infoMap, headers);
+
+        ResponseEntity<String> response = null;
+        try {
+            response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+            
+            resultMap.put("Status Code", response.getStatusCode());
+        } catch (Exception e) {
+            // 예외 처리
+            resultMap.put("code", false);
+            resultMap.put("message", response.getBody());
+        }
+        logger.info(resultMap);
 
         return resultMap;
     }
