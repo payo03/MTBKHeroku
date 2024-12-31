@@ -41,12 +41,11 @@ public class InOutInterface {
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", "application/json");
+        headers.set("Content-Type", "application/json");
         headers.set("Authorization", "App ca9697740134af524df3d4a4cf702337-e938db19-144d-4a33-90d0-fb349dae8c2d");
 
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(infoMap, headers);
         try {
-            logger.info(restTemplate.getForObject("http://ip.quotaguard.com", String.class));
-            logger.info(restTemplate.getForObject("http://ip.quotaguard.com", String.class));
             ResponseEntity<String> response = restTemplate.exchange(
                 url, 
                 HttpMethod.POST, 
