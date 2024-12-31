@@ -31,9 +31,6 @@ public class InOutInterface {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         resultMap.put("code", true);
         resultMap.put("message", "Great. you\'ve got " + ((int) (Math.random() * 100)) + " points");
-        resultMap.put("infoMap", jsonString);
-
-        String url = System.getenv("INFOBIP_URL");
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", "application/json");
@@ -49,10 +46,11 @@ public class InOutInterface {
         logger.info("### Escaped Json : " + unescapedJson + " ###");
         logger.info("#############################################");
 
+        resultMap.put("infoMap", unescapedJson);
         HttpEntity<String> requestEntity = new HttpEntity<>(unescapedJson, headers);
         try {
             ResponseEntity<String> response = restTemplate.exchange(
-                url, 
+                System.getenv("INFOBIP_URL"), 
                 HttpMethod.POST, 
                 requestEntity, 
                 String.class
