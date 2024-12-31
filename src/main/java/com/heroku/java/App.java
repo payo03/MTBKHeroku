@@ -16,6 +16,7 @@ public class App {
 
     public static void main(String[] args) throws IOException {
         
+        /*
         URL proxyUrl = new URL(System.getenv("QUOTAGUARDSTATIC_URL"));
         logger.debug("###" + proxyUrl + "###");
         String userInfo = proxyUrl.getUserInfo();
@@ -40,7 +41,7 @@ public class App {
         while ((inputLine = in.readLine()) != null)
             System.out.println(inputLine);
         in.close();
-        
+        */
 
         /*
         String proxyUrl = System.getenv("QUOTAGUARDSTATIC_URL");
