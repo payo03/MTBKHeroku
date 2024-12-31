@@ -16,5 +16,5 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
-    implementation("io.github.cdimascio:dotenv-java:3.0.0")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.0")
 }
