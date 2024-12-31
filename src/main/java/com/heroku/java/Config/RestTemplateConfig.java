@@ -18,7 +18,9 @@ public class RestTemplateConfig {
         try {
             // 1. 환경 변수에서 Quotaguard 프록시 URL 가져오기
             URL proxyUrl = new URL(System.getenv("QUOTAGUARDSTATIC_URL"));
-            System.out.println("### Proxy URL: " + proxyUrl + " ###");
+            logger.info("#############################################");
+            logger.info("### Proxy URL: " + proxyUrl + " ###");
+            logger.info("#############################################");
 
             // 2. 프록시 사용자 정보 추출
             String userInfo = proxyUrl.getUserInfo();
@@ -40,7 +42,10 @@ public class RestTemplateConfig {
             factory.setProxy(proxy);
 
             RestTemplate template = new RestTemplate(factory);
+
+            logger.info("#############################################");
             logger.info(template.getForObject("http://ip.quotaguard.com", String.class));
+            logger.info("#############################################");
             
             return template;
         } catch (Exception e) {

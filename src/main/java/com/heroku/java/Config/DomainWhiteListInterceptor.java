@@ -1,5 +1,6 @@
 package com.heroku.java.Config;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -15,11 +16,7 @@ public class DomainWhiteListInterceptor implements HandlerInterceptor {
     private static final Logger logger = LogManager.getLogger(DomainWhiteListInterceptor.class);
 
     // 허용된 도메인 리스트
-    private static final List<String> DOMAIN_WHITE_LIST = List.of(
-            "localhost",
-            "mtbk-heroku-interface-9a1b73db0729.herokuapp.com",
-            "app-force-1035--partial.sandbox.my.salesforce.com"
-    );
+    private static final List<String> DOMAIN_WHITE_LIST = Arrays.asList(System.getenv("DOMAIN_WHITE_LIST").split(","));
 
     // TODO : API Key값도 추가해야함
     @Override
