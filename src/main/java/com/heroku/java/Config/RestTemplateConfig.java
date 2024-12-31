@@ -3,9 +3,6 @@ package com.heroku.java.Config;
 import java.io.*;
 import java.net.*;
 
-import java.net.InetSocketAddress;
-import java.net.PasswordAuthentication;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -28,7 +25,6 @@ public class RestTemplateConfig {
 
             // 3. 인증 설정
             Authenticator.setDefault(new Authenticator() {
-                @Override
                 protected PasswordAuthentication getPasswordAuthentication() {
                     return new PasswordAuthentication(user, password.toCharArray());
                 }

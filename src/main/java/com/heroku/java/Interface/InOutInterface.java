@@ -45,7 +45,14 @@ public class InOutInterface {
 
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(infoMap, headers);
         try {
-            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+            logger.info(restTemplate.getForObject("http://ip.quotaguard.com", String.class));
+            logger.info(restTemplate.getForObject("http://ip.quotaguard.com", String.class));
+            ResponseEntity<String> response = restTemplate.exchange(
+                url, 
+                HttpMethod.POST, 
+                requestEntity, 
+                String.class
+            );
             
             resultMap.put("Status Code", response.getStatusCode());
         } catch (Exception e) {
