@@ -36,18 +36,9 @@ public class InOutInterface {
         headers.set("Accept", "application/json");
         headers.set("Content-Type", "application/json");
         headers.set("Authorization", System.getenv("INFOBIP_KEY"));
-
-        logger.info("#############################################");
-        logger.info("### Raw Json : " + jsonString + " ###");
-        logger.info("#############################################");
-
-        String unescapedJson = StringEscapeUtils.unescapeJson(jsonString);
-        logger.info("#############################################");
-        logger.info("### Escaped Json : " + unescapedJson + " ###");
-        logger.info("#############################################");
-
-        resultMap.put("infoMap", unescapedJson);
-        HttpEntity<String> requestEntity = new HttpEntity<>(unescapedJson, headers);
+        
+        resultMap.put("requestBody", jsonString);
+        HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, headers);
         try {
             ResponseEntity<String> response = restTemplate.exchange(
                 System.getenv("INFOBIP_URL"), 
