@@ -29,6 +29,7 @@ public class APIRequestInterceptor implements HandlerInterceptor {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Unauthorized: Invalid API Key");
             logger.warn("Invalid API Key: {}", paramKey);
+            logger.warn("Valid API Key: {}", apiKey);
 
             return false;
         }
