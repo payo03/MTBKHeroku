@@ -6,21 +6,28 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-public class WebConfig implements WebMvcConfigurer {
+public class HandlerConfig implements WebMvcConfigurer {
 
     @Autowired
-    private DomainWhiteListInterceptor domainWhitelistInterceptor;
+    private WhiteListInterceptor whiteListInterceptor;
 
     @Autowired
     private APIRequestInterceptor apiRequestInterceptor;
 
+    @Autowired
+    private RateLimitInterceptor rateLimitInterceptor;
+
     @Override
     @SuppressWarnings("null")
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(domainWhitelistInterceptor)
-                .addPathPatterns("/**"); // 모든 경로에 대해 적용
 
+        // API 호출경로에 대해 적용
+        registry.addInterceptor(whiteListInterceptor)
+                .addPathPatterns("/api/**");
         registry.addInterceptor(apiRequestInterceptor)
-                .addPathPatterns("/api/**"); // API 호출경로에 대해 적용
+                .addPathPatterns("/api/**");
+
+        // API요청은 1초에 2번
+        registry.addInterceptor(rateLimitInterceptor);
     }
 }

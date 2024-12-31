@@ -4,10 +4,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import com.heroku.java.Config.HeaderTypeList;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,16 +33,19 @@ public class InOutInterface {
         resultMap.put("code", true);
         resultMap.put("message", "Great. you\'ve got " + ((int) (Math.random() * 100)) + " points");
 
+        String infobipURL = System.getenv("INFOBIP_URL");
+        String infobipAPIKey = System.getenv("INFOBIP_KEY");
+
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Accept", "application/json");
-        headers.set("Content-Type", "application/json");
-        headers.set("Authorization", System.getenv("INFOBIP_KEY"));
+        headers.set("Accept", HeaderTypeList.APPLICATION_JSON);
+        headers.set("Content-Type", HeaderTypeList.APPLICATION_JSON);
+        headers.set("Authorization", infobipAPIKey);
         
         resultMap.put("requestBody", jsonString);
         HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, headers);
         try {
             ResponseEntity<String> response = restTemplate.exchange(
-                System.getenv("INFOBIP_URL"), 
+                infobipURL, 
                 HttpMethod.POST, 
                 requestEntity, 
                 String.class
@@ -53,8 +57,12 @@ public class InOutInterface {
             resultMap.put("code", false);
             resultMap.put("message", e.getMessage());
         }
+
+        logger.info("#############################################");
+        logger.info("### Raw Json : " + jsonString + " ###");
         headers.forEach((key, value) -> logger.info(key + ": " + value));
         logger.info(resultMap);
+        logger.info("#############################################");
 
         return resultMap;
     }
