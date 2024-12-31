@@ -30,11 +30,11 @@ public class InOutInterface {
     private RestTemplate restTemplate;
 
     @PostMapping("/kakao/alim")
-    public Map<String, Object> kakaoAlim(@RequestBody String paramString) throws Exception {
+    public Map<String, Object> kakaoAlim(@RequestBody String jsonString) throws Exception {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         resultMap.put("code", true);
         resultMap.put("message", "Great. you\'ve got " + ((int) (Math.random() * 100)) + " points");
-        resultMap.put("infoMap", paramString);
+        resultMap.put("infoMap", jsonString);
 
         String url = "https://pe86m3.api-id.infobip.com/kakao-alim/1/messages";
 
@@ -43,11 +43,9 @@ public class InOutInterface {
         headers.set("Content-Type", "application/json");
         headers.set("Authorization", "App ca9697740134af524df3d4a4cf702337-e938db19-144d-4a33-90d0-fb349dae8c2d");
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        String jsonString = objectMapper.writeValueAsString(paramString);
         String unescapedJson = StringEscapeUtils.unescapeJson(jsonString);
         logger.info("#############################################");
-        logger.info("### " + unescapedJson + " ###");
+        logger.info("### json : " + unescapedJson + " ###");
         logger.info("#############################################");
 
         HttpEntity<String> requestEntity = new HttpEntity<>(unescapedJson, headers);
