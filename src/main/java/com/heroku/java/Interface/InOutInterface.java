@@ -43,9 +43,11 @@ public class InOutInterface {
 
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(infoMap);
-        logger.info(jsonString);
+        Object jsonObject = objectMapper.readValue(jsonString, Object.class);
+        String unescapedJson = objectMapper.writeValueAsString(jsonObject);
+        logger.info(unescapedJson);
          
-        HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, headers);
+        HttpEntity<String> requestEntity = new HttpEntity<>(unescapedJson, headers);
         try {
             ResponseEntity<String> response = restTemplate.exchange(
                 url, 
