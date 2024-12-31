@@ -20,7 +20,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
@@ -32,7 +31,7 @@ public class InOutInterface {
     private RestTemplate restTemplate;
 
     @PostMapping("/kakao/alim")
-    public Map<String, Object> kakaoAlim(@RequestBody Map<String, Object> infoMap) throws Exception {
+    public Map<String, Object> kakaoAlim(@RequestParam Map<String, Object> infoMap) throws Exception {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         resultMap.put("code", true);
         resultMap.put("message", "Great. you\'ve got " + ((int) (Math.random() * 100)) + " points");
@@ -47,6 +46,7 @@ public class InOutInterface {
 
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(infoMap);
+        logger.info(jsonString);
         
         HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, headers);
         try {
