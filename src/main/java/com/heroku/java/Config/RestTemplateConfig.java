@@ -1,6 +1,7 @@
 package com.heroku.java.Config;
 
 import java.net.*;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,38 +17,44 @@ public class RestTemplateConfig {
     @Bean
     public RestTemplate restTemplate() {
         try {
-            // 1. 환경 변수에서 Quotaguard 프록시 URL 가져오기
-            URL proxyUrl = new URL(System.getenv("QUOTAGUARDSTATIC_URL"));
-            logger.info("#############################################");
-            logger.info("### Proxy URL: " + proxyUrl + " ###");
-            logger.info("#############################################");
 
-            // 2. 프록시 사용자 정보 추출
-            String userInfo = proxyUrl.getUserInfo();
-            String user = userInfo.substring(0, userInfo.indexOf(':'));
-            String password = userInfo.substring(userInfo.indexOf(':') + 1);
+            // 1. Heroku Config. Quotaguard 프록시 URL 가져오기
+            String staticURL = System.getenv("QUOTAGUARDSTATIC_URL");
+            if(staticURL != null) {
+                URL proxyUrl = new URL(System.getenv("QUOTAGUARDSTATIC_URL"));
+                logger.info("#############################################");
+                logger.info("### Proxy URL: " + proxyUrl + " ###");
+                logger.info("#############################################");
 
-            // 3. 인증 설정
-            Authenticator.setDefault(new Authenticator() {
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(user, password.toCharArray());
-                }
-            });
+                // 2. 프록시 사용자 정보 추출
+                String userInfo = proxyUrl.getUserInfo();
+                String user = userInfo.substring(0, userInfo.indexOf(':'));
+                String password = userInfo.substring(userInfo.indexOf(':') + 1);
 
-            // 4. 프록시 설정
-            Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyUrl.getHost(), proxyUrl.getPort()));
+                // 3. 인증 설정
+                Authenticator.setDefault(new Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(user, password.toCharArray());
+                    }
+                });
 
-            // 5. RestTemplate 설정
-            SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-            factory.setProxy(proxy);
+                // 4. 프록시 설정
+                Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyUrl.getHost(), proxyUrl.getPort()));
+                SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+                factory.setProxy(proxy);
 
-            RestTemplate template = new RestTemplate(factory);
+                // 5. RestTemplate. Froxy 설정
+                RestTemplate template = new RestTemplate(factory);
 
-            logger.info("#############################################");
-            logger.info(template.getForObject("http://ip.quotaguard.com", String.class));
-            logger.info("#############################################");
-            
-            return template;
+                // 6. Static IP Setting(getForObject)
+                logger.info("#############################################");
+                logger.info(template.getForObject("http://ip.quotaguard.com", String.class));
+                logger.info("#############################################");
+                
+                return template;
+            } else {
+                return new RestTemplate();
+            }
         } catch (Exception e) {
             throw new RuntimeException("Failed to configure RestTemplate with Quotaguard proxy.", e);
         }
