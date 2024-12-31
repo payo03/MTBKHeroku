@@ -14,22 +14,19 @@ import jakarta.servlet.http.HttpServletResponse;
 public class APIRequestInterceptor implements HandlerInterceptor {
     private static final Logger logger = LogManager.getLogger(APIRequestInterceptor.class);
 
-    private static final String API_PREFIX = "Bearer ";
-    private static final String API_TOKEN = Optional.ofNullable(System.getenv("API_TOKEN"))
+    private static final String API_TOKEN = Optional.ofNullable(System.getenv("API_KEY"))
                                                     .orElse("test");
 
     @Override
     @SuppressWarnings("null")
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String paramKey = request.getHeader("X-API-KEY");
-        String apiKey = API_PREFIX + API_TOKEN;
+        String apiKey = request.getHeader("X-API-KEY");
 
         // API Key 검증
-        if (paramKey == null || !apiKey.equals(paramKey)) {
+        if (apiKey == null || !API_TOKEN.equals(apiKey)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Unauthorized: Invalid API Key");
-            logger.warn("Invalid API Key: {}", paramKey);
-            logger.warn("Valid API Key: {}", apiKey);
+            logger.warn("Invalid API Key: {}", apiKey);
 
             return false;
         }
