@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,10 +44,9 @@ public class InOutInterface {
 
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(infoMap);
-        Object jsonObject = objectMapper.readValue(jsonString, Object.class);
-        String unescapedJson = objectMapper.writeValueAsString(jsonObject);
+        String unescapedJson = StringEscapeUtils.unescapeJson(jsonString);
         logger.info(unescapedJson);
-         
+
         HttpEntity<String> requestEntity = new HttpEntity<>(unescapedJson, headers);
         try {
             ResponseEntity<String> response = restTemplate.exchange(
