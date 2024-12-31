@@ -40,9 +40,13 @@ public class InOutInterface {
         headers.set("Content-Type", "application/json");
         headers.set("Authorization", System.getenv("INFOBIP_KEY"));
 
+        logger.info("#############################################");
+        logger.info("### Raw Json : " + jsonString + " ###");
+        logger.info("#############################################");
+
         String unescapedJson = StringEscapeUtils.unescapeJson(jsonString);
         logger.info("#############################################");
-        logger.info("### json : " + unescapedJson + " ###");
+        logger.info("### Escaped Json : " + unescapedJson + " ###");
         logger.info("#############################################");
 
         HttpEntity<String> requestEntity = new HttpEntity<>(unescapedJson, headers);
