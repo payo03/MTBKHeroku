@@ -45,7 +45,9 @@ public class InOutInterface {
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(infoMap);
         String unescapedJson = StringEscapeUtils.unescapeJson(jsonString);
-        logger.info(unescapedJson);
+        logger.info("#############################################");
+        logger.info("### " + unescapedJson + " ###");
+        logger.info("#############################################");
 
         HttpEntity<String> requestEntity = new HttpEntity<>(unescapedJson, headers);
         try {
