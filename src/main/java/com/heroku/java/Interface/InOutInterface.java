@@ -108,6 +108,10 @@ public class InOutInterface {
             // 예외 처리
             resultMap.put("code", false);
             resultMap.put("message", e.getMessage());
+        
+            logger.info("#############################################");
+            logger.info(e.getMessage());
+            logger.info("#############################################");
         }
         
         logger.info("#############################################");
