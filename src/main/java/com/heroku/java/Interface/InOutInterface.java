@@ -59,7 +59,7 @@ public class InOutInterface {
         }
         
         logger.info("#############################################");
-        logger.info(resultMap);
+        logger.info("SUCCESS. API Call");
         logger.info("#############################################");
 
         return resultMap;
