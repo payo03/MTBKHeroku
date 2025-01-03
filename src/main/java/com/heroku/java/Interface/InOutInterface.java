@@ -100,6 +100,10 @@ public class InOutInterface {
             
             resultMap.put("Status Code", response.getStatusCode());
             resultMap.put("message", response.getBody());
+        
+            logger.info("#############################################");
+            logger.info(response.getBody());
+            logger.info("#############################################");
         } catch (Exception e) {
             // 예외 처리
             resultMap.put("code", false);
