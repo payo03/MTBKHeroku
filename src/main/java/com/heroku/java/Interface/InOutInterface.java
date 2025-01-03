@@ -57,10 +57,8 @@ public class InOutInterface {
             resultMap.put("code", false);
             resultMap.put("message", e.getMessage());
         }
-
+        
         logger.info("#############################################");
-        logger.info("HERE");
-        logger.info("### Raw Json : {}", jsonString + " ###");
         headers.forEach((key, value) -> logger.info(key + ": " + value));
         logger.info(resultMap);
         logger.info("#############################################");
