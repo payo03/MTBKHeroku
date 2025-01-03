@@ -52,6 +52,11 @@ public class InOutInterface {
             );
             
             resultMap.put("Status Code", response.getStatusCode());
+
+            logger.info("#############################################");
+            logger.info(response.getStatusCode());
+            logger.info(response.getBody());
+            logger.info("#############################################");
         } catch (Exception e) {
             // 예외 처리
             resultMap.put("code", false);
