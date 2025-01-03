@@ -57,15 +57,19 @@ public class InOutInterface {
             
             resultMap.put("Status Code", response.getStatusCode());
             resultMap.put("message", response.getBody());
+        
+            logger.info("#############################################");
+            logger.info("SUCCESS. KAKAO API Call, {}", response.getBody());
+            logger.info("#############################################");
         } catch (Exception e) {
             // 예외 처리
             resultMap.put("code", false);
             resultMap.put("message", e.getMessage());
-        }
         
-        logger.info("#############################################");
-        logger.info("SUCCESS. KAKAO API Call");
-        logger.info("#############################################");
+            logger.info("#############################################");
+            logger.info("Fail. KAKAO API Call, {}", e.getMessage());
+            logger.info("#############################################");
+        }
 
         return resultMap;
     }
@@ -102,7 +106,7 @@ public class InOutInterface {
             resultMap.put("message", response.getBody());
         
             logger.info("#############################################");
-            logger.info(response.getBody());
+            logger.info("SUCCESS. KAKAO API Call, {}", response.getBody());
             logger.info("#############################################");
         } catch (Exception e) {
             // 예외 처리
@@ -110,13 +114,9 @@ public class InOutInterface {
             resultMap.put("message", e.getMessage());
         
             logger.info("#############################################");
-            logger.info(e.getMessage());
+            logger.info("Fail. KAKAO API Call, {}", e.getMessage());
             logger.info("#############################################");
         }
-        
-        logger.info("#############################################");
-        logger.info("SUCCESS. TEMPLATE API Call");
-        logger.info("#############################################");
 
         return resultMap;
     }
