@@ -59,7 +59,6 @@ public class InOutInterface {
         }
         
         logger.info("#############################################");
-        headers.forEach((key, value) -> logger.info(key + ": " + value));
         logger.info(resultMap);
         logger.info("#############################################");
 
