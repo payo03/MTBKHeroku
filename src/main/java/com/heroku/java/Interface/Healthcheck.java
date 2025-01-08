@@ -2,6 +2,7 @@ package com.heroku.java.Interface;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.heroku.java.Config.SFDCTokenManager;
 
@@ -47,15 +48,22 @@ public class Healthcheck {
     @SuppressWarnings("null")
     public String callSFDCHealthCheck() {
         String text = null;
-        String SFDCHealthCheckURL = "https://app-force-1035--partial.sandbox.my.salesforce.com/services/apexrest/api/check";
+        
+        // URL
+        String SDFCURL = System.getenv("SFDC_URL");
+        // String SDFCURL = "https://app-force-1035--partial.sandbox.my.salesforce.com/services";
+        String healthCheckURL = "apexrest/api/check";
+        UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SDFCURL)
+            .pathSegment(healthCheckURL);
 
+        // Header
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + tokenManager.getApiToken());
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
         try {
             ResponseEntity<HashMap<String, String>> response = restTemplate.exchange(
-                SFDCHealthCheckURL, 
+                URIBuilder.toUriString(), 
                 HttpMethod.GET, 
                 requestEntity, 
                 new ParameterizedTypeReference<HashMap<String, String>>() {}

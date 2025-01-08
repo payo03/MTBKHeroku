@@ -40,6 +40,7 @@ public class SFDCInOutInterface {
         String infobipURL = System.getenv("INFOBIP_URL");
         String infobipAPIKey = System.getenv("INFOBIP_KEY");
 
+        // Header
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", HeaderTypeList.APPLICATION_JSON);
         headers.set("Content-Type", HeaderTypeList.APPLICATION_JSON);
@@ -82,15 +83,16 @@ public class SFDCInOutInterface {
         resultMap.put("message", "Great. you\'ve got " + ((int) (Math.random() * 100)) + " points");
         logger.info(request);
 
+        // URL
         String WSMokaURL = System.getenv("WS_MOKA_URL");
         // String WSMokaURL = "https://wt-api.carrym.com:8445/api/v1/mantruck/template";
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Content-Type", HeaderTypeList.FORM_URLENCODE);
-
         UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(WSMokaURL)
             .queryParam("senderKey", request.getSenderKey())
             .queryParam("since", request.getSince());
+
+        // Header
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", HeaderTypeList.FORM_URLENCODE);
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
         logger.info(URIBuilder.toUriString());
