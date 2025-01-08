@@ -1,7 +1,5 @@
 package com.heroku.java.Config;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class RateLimitConfig {
-    
+
     private final ConcurrentHashMap<String, Long> requestMap = new ConcurrentHashMap<>();
     private static final long THRESHOLD_TIME = 500; // 0.5초
 

@@ -1,7 +1,6 @@
 package com.heroku.java.Interface;
 
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.heroku.java.Config.SFDCTokenManager;

@@ -1,30 +1,27 @@
 package com.heroku.java.Interface;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
-
-import com.heroku.java.Config.SFDCTokenManager;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import com.heroku.java.Config.SFDCTokenManager;
 
 
 @RestController
 @RequestMapping("/api/sap")
 public class SAPInOutInterface {
     private static final Logger logger = LogManager.getLogger(SAPInOutInterface.class);
+    
+    private static final String IF_HEALTHCHECK = "GetTest";
 
     @Autowired
     private RestTemplate restTemplate;
@@ -35,12 +32,16 @@ public class SAPInOutInterface {
     @GetMapping("/healthcheck")
     public String callSAPHealthCheck() {
         String text = null;
-        String SFDCHealthCheckURL = "http://3.36.162.185:80/MAN/GetTest";
+        // String SAPURL = System.getenv("SAP_URL");
+        String SAPURL = "http://3.36.162.185:80/MAN";
+
+        UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SAPURL)
+            .path(IF_HEALTHCHECK);
 
         HttpEntity<String> requestEntity = new HttpEntity<>(new HttpHeaders());
         try {
             ResponseEntity<String> response = restTemplate.exchange(
-                SFDCHealthCheckURL, 
+                URIBuilder.toUriString(), 
                 HttpMethod.GET, 
                 requestEntity, 
                 String.class
