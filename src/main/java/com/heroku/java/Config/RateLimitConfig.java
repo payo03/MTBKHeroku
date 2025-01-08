@@ -28,10 +28,6 @@ public class RateLimitConfig {
             return true; // 요청 허용
         }
 
-        logger.info("#############################################");
-        logger.info("ServerName : {}, Time : {}", serverName, diffTime);
-        logger.info("#############################################");
-
         return false; // 요청 차단
     }
 }
