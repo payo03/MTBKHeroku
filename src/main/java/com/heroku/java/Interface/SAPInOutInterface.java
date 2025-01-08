@@ -32,12 +32,13 @@ public class SAPInOutInterface {
     @GetMapping("/healthcheck")
     public String callSAPHealthCheck() {
         String text = null;
-        // String SAPURL = System.getenv("SAP_URL");
-        String SAPURL = "http://3.36.162.185:80/MAN";
+        String SAPURL = System.getenv("SAP_URL");
+        // String SAPURL = "http://3.36.162.185:80/MAN";
 
         UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SAPURL)
-            .path(IF_HEALTHCHECK);
+            .pathSegment(IF_HEALTHCHECK);
 
+        System.out.println(URIBuilder.toUriString());
         HttpEntity<String> requestEntity = new HttpEntity<>(new HttpHeaders());
         try {
             ResponseEntity<String> response = restTemplate.exchange(
