@@ -18,17 +18,17 @@ public class RateLimitConfig {
         String serverName = request.getServerName();
         long currentTime = System.currentTimeMillis();
 
-        Long lastRequestTime = requestMap.get(serverName);
+        Long lastRequestTime = requestMap.get(serverName) != null ? requestMap.get(serverName) : 0;
         Long diffTime = currentTime - lastRequestTime;
         if (lastRequestTime == null || diffTime > THRESHOLD_TIME) {
             requestMap.put(serverName, currentTime);
-
-            logger.info("#############################################");
-            logger.info("ServerName : {}", serverName + ", Time : {}", diffTime);
-            logger.info("#############################################");
-
             return true; // 요청 허용
         }
+
+        logger.info("#############################################");
+        logger.info("ServerName : {}", serverName + ", Time : {}", diffTime);
+        logger.info("#############################################");
+
         return false; // 요청 차단
     }
 }
