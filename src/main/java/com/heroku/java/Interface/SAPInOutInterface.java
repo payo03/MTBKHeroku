@@ -24,14 +24,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/sap")
 public class SAPInOutInterface {
     private static final Logger logger = LogManager.getLogger(SAPInOutInterface.class);
 
     @Autowired
     private RestTemplate restTemplate;
 
-    @PostMapping("/kakao/alim")
+    @PostMapping("/sms001")
     public Map<String, Object> kakaoAlim(@RequestBody String jsonString) throws Exception {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         resultMap.put("code", true);
@@ -75,7 +75,7 @@ public class SAPInOutInterface {
     }
 
     
-    @GetMapping("/wsmoka/template")
+    @GetMapping("/sms002")
     public Map<String, Object> fetchTemplate(@ModelAttribute FetchTemplateRequest request) throws Exception {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         resultMap.put("code", true);

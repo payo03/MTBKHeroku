@@ -26,7 +26,7 @@ public class RateLimitConfig {
         }
 
         logger.info("#############################################");
-        logger.info("ServerName : {}", serverName + ", Time : {}", diffTime);
+        logger.info("ServerName : {}, Time : {}", serverName, diffTime);
         logger.info("#############################################");
 
         return false; // 요청 차단

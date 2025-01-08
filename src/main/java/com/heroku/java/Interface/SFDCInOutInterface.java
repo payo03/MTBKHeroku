@@ -31,7 +31,7 @@ public class SFDCInOutInterface {
     @Autowired
     private RestTemplate restTemplate;
 
-    @PostMapping("/sfdc/alim")
+    @PostMapping("/kakao/alim")
     public Map<String, Object> kakaoAlim(@RequestBody String jsonString) throws Exception {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         resultMap.put("code", true);
@@ -75,7 +75,7 @@ public class SFDCInOutInterface {
     }
 
     
-    @GetMapping("/sfdc/template")
+    @GetMapping("/wsmoka/template")
     public Map<String, Object> fetchTemplate(@ModelAttribute FetchTemplateRequest request) throws Exception {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         resultMap.put("code", true);
