@@ -18,10 +18,13 @@ public class RateLimitConfig {
         String serverName = request.getServerName();
         long currentTime = System.currentTimeMillis();
 
-        Long lastRequestTime = requestMap.get(serverName) != null ? requestMap.get(serverName) : 0;
-        Long diffTime = currentTime - lastRequestTime;
-        if (lastRequestTime == null || diffTime > THRESHOLD_TIME) {
+        Long lastRequestTime = requestMap.get(serverName);
+        if (
+            lastRequestTime == null || 
+            currentTime - lastRequestTime > THRESHOLD_TIME
+        ) {
             requestMap.put(serverName, currentTime);
+
             return true; // 요청 허용
         }
 
