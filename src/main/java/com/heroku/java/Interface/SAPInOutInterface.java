@@ -25,8 +25,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/api")
-public class InOutInterface {
-    private static final Logger logger = LogManager.getLogger(InOutInterface.class);
+public class SAPInOutInterface {
+    private static final Logger logger = LogManager.getLogger(SAPInOutInterface.class);
 
     @Autowired
     private RestTemplate restTemplate;

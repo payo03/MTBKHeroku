@@ -15,6 +15,7 @@ public class RestTemplateConfig {
 
     @Bean
     public RestTemplate restTemplate() {
+        // TODO : RestClient가 있다고함... 써본적이 없어서 RestTemplate으로 사용했음
         try {
 
             // 1. Heroku Config. Quotaguard 프록시 URL 가져오기

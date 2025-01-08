@@ -1,11 +1,15 @@
 package com.heroku.java.Config;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
+
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class RateLimitConfig {
+    private static final Logger logger = LogManager.getLogger(RateLimitConfig.class);
 
     private final ConcurrentHashMap<String, Long> requestMap = new ConcurrentHashMap<>();
     private static final long THRESHOLD_TIME = 500; // 0.5초
@@ -15,8 +19,14 @@ public class RateLimitConfig {
         long currentTime = System.currentTimeMillis();
 
         Long lastRequestTime = requestMap.get(serverName);
-        if (lastRequestTime == null || (currentTime - lastRequestTime > THRESHOLD_TIME)) {
+        Long diffTime = currentTime - lastRequestTime;
+        if (lastRequestTime == null || diffTime > THRESHOLD_TIME) {
             requestMap.put(serverName, currentTime);
+
+            logger.info("#############################################");
+            logger.info("ServerName : {}", serverName + ", Time : {}", diffTime);
+            logger.info("#############################################");
+
             return true; // 요청 허용
         }
         return false; // 요청 차단
