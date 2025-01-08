@@ -83,7 +83,7 @@ public class SFDCInOutInterface {
         logger.info(request);
 
         String WSMokaURL = System.getenv("WS_MOKA_URL");
-        // String WSMokaURL = "https://wt-api.carrym.com:8445/api/v1/mantruck/template/last_modified";
+        // String WSMokaURL = "https://wt-api.carrym.com:8445/api/v1/mantruck/template";
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", HeaderTypeList.FORM_URLENCODE);
