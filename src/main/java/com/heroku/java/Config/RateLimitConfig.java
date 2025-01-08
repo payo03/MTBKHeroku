@@ -9,8 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class RateLimitConfig {
-    private static final Logger logger = LogManager.getLogger(RateLimitConfig.class);
-
+    
     private final ConcurrentHashMap<String, Long> requestMap = new ConcurrentHashMap<>();
     private static final long THRESHOLD_TIME = 500; // 0.5초
 

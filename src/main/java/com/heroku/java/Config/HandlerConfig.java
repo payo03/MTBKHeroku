@@ -27,7 +27,7 @@ public class HandlerConfig implements WebMvcConfigurer {
         registry.addInterceptor(apiRequestInterceptor)
                 .addPathPatterns("/api/**");
 
-        // API요청은 1초에 2번
-        registry.addInterceptor(rateLimitInterceptor);
+        // API요청은 1초에 2번(해제)
+        // registry.addInterceptor(rateLimitInterceptor);
     }
 }
