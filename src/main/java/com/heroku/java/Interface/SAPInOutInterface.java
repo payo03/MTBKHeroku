@@ -37,8 +37,7 @@ public class SAPInOutInterface {
 
         UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SAPURL)
             .pathSegment(IF_HEALTHCHECK);
-
-        System.out.println(URIBuilder.toUriString());
+            
         HttpEntity<String> requestEntity = new HttpEntity<>(new HttpHeaders());
         try {
             ResponseEntity<String> response = restTemplate.exchange(
