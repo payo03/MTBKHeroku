@@ -2,6 +2,7 @@ package com.heroku.java.Interface;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -10,6 +11,7 @@ import com.heroku.java.DTO.FetchTemplateRequest;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -56,20 +58,29 @@ public class SFDCInOutInterface {
                 String.class
             );
             
-            resultMap.put("Status Code", response.getStatusCode());
+            resultMap.put("Status Code", response.getStatusCode().value());
             resultMap.put("message", response.getBody());
         
             logger.info("#############################################");
             logger.info("SUCCESS. KAKAO API Call, {}", response.getBody());
             logger.info("#############################################");
+        } catch (HttpClientErrorException e) {
+            // 일반적인 HTTP 에러 처리
+            resultMap.put("code", false);
+            resultMap.put("Status Code", e.getStatusCode().value());
+            resultMap.put("message", e.getResponseBodyAsString());
+        
+            logger.error("#############################################");
+            logger.error("Error. Request {}. SFDC: {}", jsonString, e.getResponseBodyAsString());
+            logger.error("#############################################");
         } catch (Exception e) {
             // 예외 처리
             resultMap.put("code", false);
             resultMap.put("message", e.getMessage());
         
-            logger.info("#############################################");
-            logger.info("Fail. KAKAO API Call, {}", e.getMessage());
-            logger.info("#############################################");
+            logger.error("#############################################");
+            logger.error("Fail. KAKAO API Call, {}", e.getMessage());
+            logger.error("#############################################");
         }
 
         return resultMap;
@@ -84,8 +95,8 @@ public class SFDCInOutInterface {
         logger.info(request);
 
         // URL
-        String WSMokaURL = System.getenv("WS_MOKA_URL");
-        // String WSMokaURL = "https://wt-api.carrym.com:8445/api/v1/mantruck/template";
+        String WSMokaURL = Optional.ofNullable(System.getenv("WS_MOKA_URL"))
+            .orElse("https://wt-api.carrym.com:8445/api/v1/mantruck/template");
         UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(WSMokaURL)
             .queryParam("senderKey", request.getSenderKey())
             .queryParam("since", request.getSince());
@@ -104,20 +115,29 @@ public class SFDCInOutInterface {
                 String.class
             );
             
-            resultMap.put("Status Code", response.getStatusCode());
+            resultMap.put("Status Code", response.getStatusCode().value());
             resultMap.put("message", response.getBody());
         
             logger.info("#############################################");
             logger.info("SUCCESS. KAKAO API Call, {}", response.getBody());
             logger.info("#############################################");
+        } catch (HttpClientErrorException e) {
+            // 일반적인 HTTP 에러 처리
+            resultMap.put("code", false);
+            resultMap.put("Status Code", e.getStatusCode().value());
+            resultMap.put("message", e.getResponseBodyAsString());
+        
+            logger.error("#############################################");
+            logger.error("Error. Request {}. SFDC: {}", request, e.getResponseBodyAsString());
+            logger.error("#############################################");
         } catch (Exception e) {
             // 예외 처리
             resultMap.put("code", false);
             resultMap.put("message", e.getMessage());
         
-            logger.info("#############################################");
-            logger.info("Fail. KAKAO API Call, {}", e.getMessage());
-            logger.info("#############################################");
+            logger.error("#############################################");
+            logger.error("Fail. KAKAO API Call, {}", e.getMessage());
+            logger.error("#############################################");
         }
 
         return resultMap;

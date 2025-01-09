@@ -3,6 +3,7 @@ package com.heroku.java.Config;
 public class HeaderTypeList {
 
     public static final String TEXT_PLAIN = "text/plain";
+    public static final String TEXT_PLAIN_UTF8 = "text/plain; charset=UTF-8";
     public static final String TEXT_HTML = "text/xml";
     public static final String APPLICATION_JSON = "application/json";
     public static final String APPLICATION_XML = "application/xml";

@@ -2,6 +2,7 @@ package com.heroku.java.Config;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,14 +23,20 @@ public class SFDCTokenManager {
     @Autowired
     private RestTemplate restTemplate;
 
-    private static final Long EXPIRED_PERIOD = 7140000L;
-    private static final String AUTH_TOKEN_URL = "oauth2/token";
+    private static final Long EXPIRED_PERIOD = 7140000L;    // 1시간 59분
+    private static final String URL_OAUTH2 = "oauth2";
+    private static final String URL_TOKEN = "token";
+
     private String apiToken;
     private Long expiredTime = System.currentTimeMillis() - 1;
 
     // 현재 토큰 반환
     public String getApiToken() {
         if (isTokenExpired()) {
+            logger.info("#############################################");
+            logger.info("currentTime : {}, expiredTime : {}", System.currentTimeMillis(), this.expiredTime);
+            logger.info("#############################################");
+
             fetchNewToken(); 
         }
         return this.apiToken;
@@ -37,13 +44,13 @@ public class SFDCTokenManager {
 
     // 토큰갱신
     @SuppressWarnings("null")
-    private void fetchNewToken() {
-
+    public void fetchNewToken() {
         // URL
-        String SDFCURL = System.getenv("SFDC_URL");
-        // String SDFCURL = "https://app-force-1035--partial.sandbox.my.salesforce.com/services";
+        String SDFCURL = Optional.ofNullable(System.getenv("SFDC_URL"))
+            .orElse("https://app-force-1035--partial.sandbox.my.salesforce.com/services");
         UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SDFCURL)
-        .pathSegment(AUTH_TOKEN_URL);
+            .pathSegment(URL_OAUTH2)
+            .pathSegment(URL_TOKEN);
 
         // Header
         HttpHeaders headers = new HttpHeaders();
@@ -82,17 +89,14 @@ public class SFDCTokenManager {
             logger.info("SUCCESS. Token Fetch, {}", response.getBody());
             logger.info("#############################################");
         } catch (Exception e) {
-            logger.info("#############################################");
-            logger.info("Fail. Token Fetch, {}", e.getMessage());
-            logger.info("#############################################");
+            logger.error("#############################################");
+            logger.error("Fail. Token Fetch, {}", e.getMessage());
+            logger.error("#############################################");
         }
     }
 
     // 토큰 만료 여부 확인
     private boolean isTokenExpired() {
-        logger.info("#############################################");
-        logger.info("currentTime : {}, expiredTime : {}", System.currentTimeMillis(), this.expiredTime);
-        logger.info("#############################################");
         return System.currentTimeMillis() > this.expiredTime;
     }
 }

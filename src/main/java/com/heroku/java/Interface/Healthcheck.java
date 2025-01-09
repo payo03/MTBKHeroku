@@ -9,6 +9,7 @@ import com.heroku.java.Config.SFDCTokenManager;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -50,8 +51,8 @@ public class Healthcheck {
         String text = null;
         
         // URL
-        String SDFCURL = System.getenv("SFDC_URL");
-        // String SDFCURL = "https://app-force-1035--partial.sandbox.my.salesforce.com/services";
+        String SDFCURL = Optional.ofNullable(System.getenv("SFDC_URL"))
+            .orElse("https://app-force-1035--partial.sandbox.my.salesforce.com/services");
         String healthCheckURL = "apexrest/api/check";
         UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SDFCURL)
             .pathSegment(healthCheckURL);
@@ -76,9 +77,9 @@ public class Healthcheck {
             logger.info("SUCCESS. SFDC HealthCheck, {}", response.getBody());
             logger.info("#############################################");
         } catch (Exception e) {
-            logger.info("#############################################");
-            logger.info("Fail. SFDC HealthCheck, {}", e.getMessage());
-            logger.info("#############################################");
+            logger.error("#############################################");
+            logger.error("Fail. SFDC HealthCheck, {}", e.getMessage());
+            logger.error("#############################################");
         }
 
         return text;

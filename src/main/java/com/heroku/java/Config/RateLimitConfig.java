@@ -8,14 +8,15 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class RateLimitConfig {
 
-    private final ConcurrentHashMap<String, Long> requestMap = new ConcurrentHashMap<>();
     private static final long THRESHOLD_TIME = 500; // 0.5초
+
+    private ConcurrentHashMap<String, Long> requestMap = new ConcurrentHashMap<>();
+    private Long lastRequestTime = null;
 
     public boolean isRequestAllowed(HttpServletRequest request) {
         String serverName = request.getServerName();
         long currentTime = System.currentTimeMillis();
-
-        Long lastRequestTime = requestMap.get(serverName);
+        lastRequestTime = requestMap.get(serverName);
         if (
             lastRequestTime == null || 
             currentTime - lastRequestTime > THRESHOLD_TIME

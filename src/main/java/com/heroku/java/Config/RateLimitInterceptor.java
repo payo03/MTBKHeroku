@@ -19,7 +19,7 @@ public class RateLimitInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (!rateLimitConfig.isRequestAllowed(request)) {
             response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
-            response.setHeader("Content-Type", "text/plain; charset=UTF-8");
+            response.setHeader("Content-Type", HeaderTypeList.TEXT_PLAIN_UTF8);
             response.getWriter().write("Too many requests. Please try again later.");
             return false;
         }
