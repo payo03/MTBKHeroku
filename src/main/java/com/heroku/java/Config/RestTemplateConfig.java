@@ -16,12 +16,13 @@ public class RestTemplateConfig {
     @Bean
     public RestTemplate restTemplate() {
         // TODO : RestClient가 있다고함... 써본적이 없어서 RestTemplate으로 사용했음
-        try {
 
+        try {
             // 1. Heroku Config. Quotaguard 프록시 URL 가져오기
             String staticURL = System.getenv("QUOTAGUARDSTATIC_URL");
+            // String staticURL = "http://99f6xifhcpfsp9:zk22po7mzifqto3ujaqtigi1sdeu8@us-east-static-02.quotaguard.com:9293";
             if(staticURL != null) {
-                URL proxyUrl = new URL(System.getenv("QUOTAGUARDSTATIC_URL"));
+                URL proxyUrl = new URL(staticURL);
                 logger.info("#############################################");
                 logger.info("### Proxy URL: " + proxyUrl + " ###");
                 logger.info("#############################################");
@@ -43,15 +44,8 @@ public class RestTemplateConfig {
                 SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
                 factory.setProxy(proxy);
 
-                // 5. RestTemplate. Froxy 설정
-                RestTemplate template = new RestTemplate(factory);
-
-                // 6. Static IP Setting(getForObject)
-                logger.info("#############################################");
-                logger.info(template.getForObject("http://ip.quotaguard.com", String.class));
-                logger.info("#############################################");
-                
-                return template;
+                // 5. RestTemplate. Froxy 설정                
+                return new RestTemplate(factory);
             } else {
                 return new RestTemplate();
             }
