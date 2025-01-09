@@ -44,8 +44,15 @@ public class RestTemplateConfig {
                 SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
                 factory.setProxy(proxy);
 
-                // 5. RestTemplate. Froxy 설정                
-                return new RestTemplate(factory);
+                // 5. RestTemplate. Froxy 설정
+                RestTemplate template = new RestTemplate(factory);
+
+                // 6. Static IP Setting(getForObject)
+                logger.info("#############################################");
+                logger.info(template.getForObject("http://ip.quotaguard.com", String.class));
+                logger.info("#############################################");
+                
+                return template;
             } else {
                 return new RestTemplate();
             }
