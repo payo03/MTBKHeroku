@@ -39,8 +39,10 @@ public class SFDCInOutInterface {
         resultMap.put("code", true);
         resultMap.put("message", "Great. you\'ve got " + ((int) (Math.random() * 100)) + " points");
 
-        String infobipURL = System.getenv("INFOBIP_URL");
-        String infobipAPIKey = System.getenv("INFOBIP_KEY");
+        String infobipURL = Optional.ofNullable(System.getenv("INFOBIP_URL"))
+            .orElse("https://pe86m3.api-id.infobip.com/kakao-alim/1/messages");
+        String infobipAPIKey = Optional.ofNullable(System.getenv("INFOBIP_KEY"))
+            .orElse("App ca9697740134af524df3d4a4cf702337-e938db19-144d-4a33-90d0-fb349dae8c2d");
 
         // Header
         HttpHeaders headers = new HttpHeaders();

@@ -26,16 +26,13 @@ import com.heroku.java.Config.SFDCTokenManager;
 
 @RestController
 @RequestMapping("/api/sap")
-public class SAPInOutInterface {
-    private static final Logger logger = LogManager.getLogger(SAPInOutInterface.class);
+public class SAPInboundInterface {
+    private static final Logger logger = LogManager.getLogger(SAPInboundInterface.class);
     
     private static final String URL_APEXREST = "apexrest";
     private static final String URL_API = "api";
     private static final String URL_SAP = "sap";
 
-    private static final String SAP_HEALTHCHECK = "GetTest";
-
-    private static final String PATH_ES001 = "sms001";
     private static final String PATH_ES014 = "sms014";
 
     @Autowired
@@ -43,40 +40,6 @@ public class SAPInOutInterface {
 
     @Autowired
     private SFDCTokenManager tokenManager;
-    
-    @GetMapping("/healthcheck")
-    public String healthCheck() {
-        String text = null;
-        String SAPURL = Optional.ofNullable(System.getenv("SAP_URL"))
-            .orElse("http://3.36.162.185:80/MAN");
-        UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SAPURL)
-            .pathSegment(SAP_HEALTHCHECK);
-
-        HttpEntity<String> requestEntity = new HttpEntity<>(new HttpHeaders());
-        try {
-            ResponseEntity<String> response = restTemplate.exchange(
-                URIBuilder.toUriString(), 
-                HttpMethod.GET, 
-                requestEntity, 
-                String.class
-            );
-            text = response.getBody();
-
-            logger.info("#############################################");
-            logger.info("SUCCESS. SAP HealthCheck, {}", text);
-            logger.info("#############################################");
-        } catch (HttpClientErrorException e) {        
-            logger.error("#############################################");
-            logger.error("Error. SAP HealthCheck, {}", e.getMessage());
-            logger.error("#############################################");
-        } catch (Exception e) {
-            logger.error("#############################################");
-            logger.error("Fail. SAP HealthCheck, {}", e.getMessage());
-            logger.error("#############################################");
-        }
-
-        return text;
-    }
 
     @PostMapping("/sms014")
     public Map<String, Object> sms014(@RequestBody String jsonString) {
