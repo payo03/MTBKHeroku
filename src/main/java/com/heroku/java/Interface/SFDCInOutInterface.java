@@ -159,8 +159,8 @@ public class SFDCInOutInterface {
         logger.info("SUCCESS. Response, {}", file);
         logger.info("#############################################");
 
+        file = file.replaceFirst("file=", "");
         file = URLDecoder.decode(file, StandardCharsets.UTF_8.toString());
-        file = file.replaceAll("file=", "");
 
         logger.info("#############################################");
         logger.info("SUCCESS. Encoding, {}", file);
