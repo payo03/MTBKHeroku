@@ -159,7 +159,10 @@ public class SFDCInOutInterface {
         logger.info("SUCCESS. Response, {}", file);
         logger.info("#############################################");
 
-        file = URLDecoder.decode(file, StandardCharsets.UTF_8.toString()).replace("file=", "");
+        file = URLDecoder.decode(file, StandardCharsets.UTF_8.toString());
+        file = file.replaceAll("file=", "");
+        file = file.replaceAll("\\s+", ""); // 공백 제거
+        file = file.replaceAll("[^A-Za-z0-9+/=]", ""); // Base64 허용 문자만 남기기
 
         logger.info("#############################################");
         logger.info("SUCCESS. Encoding, {}", file);
