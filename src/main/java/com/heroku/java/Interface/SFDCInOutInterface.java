@@ -154,18 +154,21 @@ public class SFDCInOutInterface {
 
     @PostMapping("/getpagenumber")
     public Integer getPageNumber(@RequestBody String file) throws UnsupportedEncodingException {
+        file = file.replaceFirst("file=", "");
 
         logger.info("#############################################");
         logger.info("SUCCESS. Response, {}", file);
         logger.info("#############################################");
 
-        file = file.replaceFirst("file=", "");
+        logger.info("#############################################");
+        logger.info("SUCCESS. Encoding1, {}", URLDecoder.decode(file, StandardCharsets.UTF_8));
+        logger.info("#############################################");
+
         file = URLDecoder.decode(file, StandardCharsets.UTF_8.toString());
 
         logger.info("#############################################");
-        logger.info("SUCCESS. Encoding, {}", file);
+        logger.info("SUCCESS. Encoding2, {}", file);
         logger.info("#############################################");
-
         byte[] pdfData = Base64.getDecoder().decode(file);
         
         // PDF 데이터를 메모리로 읽기
