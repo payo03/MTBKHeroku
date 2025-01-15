@@ -160,14 +160,10 @@ public class SFDCInOutInterface {
         logger.info("SUCCESS. Response, {}", file);
         logger.info("#############################################");
 
-        logger.info("#############################################");
-        logger.info("SUCCESS. Encoding1, {}", URLDecoder.decode(file, StandardCharsets.UTF_8));
-        logger.info("#############################################");
-
-        file = URLDecoder.decode(file, StandardCharsets.UTF_8.toString());
+        String decodeFile = URLDecoder.decode(file, StandardCharsets.UTF_8.toString());
 
         logger.info("#############################################");
-        logger.info("SUCCESS. Encoding2, {}", file);
+        logger.info("SUCCESS. Encoding2, {}", decodeFile);
         logger.info("#############################################");
         byte[] pdfData = Base64.getDecoder().decode(file);
         
