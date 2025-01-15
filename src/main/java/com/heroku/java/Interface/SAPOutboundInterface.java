@@ -27,7 +27,7 @@ import com.heroku.java.Config.SFDCTokenManager;
 @RestController
 @RequestMapping("/api/sap")
 public class SAPOutboundInterface {
-    private static final Logger logger = LogManager.getLogger(SAPInboundInterface.class);
+    private static final Logger logger = LogManager.getLogger(SAPOutboundInterface.class);
 
     private static final String SAP_HEALTHCHECK = "GetTest";
     private static final String PATH_ES007 = "SMS007";
@@ -108,11 +108,11 @@ public class SAPOutboundInterface {
             resultMap.put("message", response.getBody());
 
             logger.info("#############################################");
-            logger.info("SUCCESS. Request {}. SFDC: {}", requestEntity.getBody(), response.getBody());
+            logger.info("SUCCESS. Request {}. SAP: {}", requestEntity.getBody(), response.getBody());
             logger.info("#############################################");
         } catch (HttpClientErrorException.Unauthorized e) {
             // SAP Token 갱신필요
-            
+
         } catch (HttpClientErrorException e) {
             // HTTP 에러 처리
             resultMap.put("code", false);
@@ -120,7 +120,7 @@ public class SAPOutboundInterface {
             resultMap.put("message", e.getResponseBodyAsString());
         
             logger.error("#############################################");
-            logger.error("Error. Request {}. SFDC: {}", requestEntity.getBody(), e.getResponseBodyAsString());
+            logger.error("Error. Request {}. SAP: {}", requestEntity.getBody(), e.getResponseBodyAsString());
             logger.error("#############################################");
         } catch (Exception e) {
             resultMap.put("code", false);

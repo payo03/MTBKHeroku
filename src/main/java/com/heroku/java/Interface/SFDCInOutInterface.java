@@ -9,12 +9,20 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.heroku.java.Config.HeaderTypeList;
 import com.heroku.java.DTO.FetchTemplateRequest;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.sql.Blob;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -88,7 +96,6 @@ public class SFDCInOutInterface {
         return resultMap;
     }
 
-    
     @GetMapping("/wsmoka/template")
     public Map<String, Object> fetchTemplate(@ModelAttribute FetchTemplateRequest request) throws Exception {
         Map<String, Object> resultMap = new HashMap<String, Object>();
@@ -144,4 +151,25 @@ public class SFDCInOutInterface {
 
         return resultMap;
     }
+
+    @PostMapping("/getpagenumber")
+    public Integer getPageNumber(@RequestBody String file) throws UnsupportedEncodingException {
+
+        file = URLDecoder.decode(file, StandardCharsets.UTF_8.toString()).replace("file=", "");
+        byte[] pdfData = Base64.getDecoder().decode(file);
+        
+        // PDF 데이터를 메모리로 읽기
+        try (PDDocument document = PDDocument.load(new ByteArrayInputStream(pdfData))) {
+
+            // 페이지 수 계산
+            int pageCount = document.getNumberOfPages();
+
+            return pageCount;
+        } catch (IOException e) {
+            e.printStackTrace();
+
+            return 0;
+        }
+    }
+
 }
