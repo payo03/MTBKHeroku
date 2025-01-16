@@ -30,6 +30,7 @@ public class SAPOutboundInterface {
     private static final Logger logger = LogManager.getLogger(SAPOutboundInterface.class);
 
     private static final String SAP_HEALTHCHECK = "GetTest";
+    private static final String PATH_ES004 = "SMS004";
     private static final String PATH_ES007 = "SMS007";
 
     @Autowired
@@ -70,6 +71,24 @@ public class SAPOutboundInterface {
         }
 
         return text;
+    }
+
+    @PostMapping("/sms004")
+    public Map<String, Object> sms004(@RequestBody String jsonString) {
+        logger.info("\n{}", jsonString);
+
+        // URL
+        String SAP_URL = Optional.ofNullable(System.getenv("SAP_URL"))
+            .orElse("http://3.36.162.185:80/MAN");
+        UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SAP_URL)
+            .pathSegment(PATH_ES004);
+            
+        // Header
+        HttpHeaders headers = makeHeadersSAP();
+        // Request Info
+        HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, headers);
+
+        return doCallOutSAP(String.class, URIBuilder, requestEntity);
     }
 
     @PostMapping("/sms007")
