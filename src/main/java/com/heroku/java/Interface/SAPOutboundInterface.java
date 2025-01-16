@@ -110,6 +110,10 @@ public class SAPOutboundInterface {
     }
 
     private <T> Map<String, Object> doCallOutSAP(Object responseType, UriComponentsBuilder URIBuilder, HttpEntity<String> requestEntity) {
+        logger.info("#############################################");
+        logger.info("Endpoint URL. {}", URIBuilder.toUriString());
+        logger.info("#############################################");
+
         Map<String, Object> resultMap = new HashMap<String, Object>();
         resultMap.put("code", true);
         resultMap.put("message", "Great. you\'ve got " + ((int) (Math.random() * 100)) + " points");
