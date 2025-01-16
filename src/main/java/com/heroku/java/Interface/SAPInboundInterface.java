@@ -12,7 +12,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +23,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.heroku.java.Config.HeaderTypeList;
 import com.heroku.java.Config.SFDCTokenManager;
+import com.heroku.java.DTO.Stock;
 
 @RestController
 @RequestMapping("/api/sap")
@@ -34,12 +35,38 @@ public class SAPInboundInterface {
     private static final String URL_SAP = "sap";
 
     private static final String PATH_ES014 = "sms014";
+    private static final String PATH_ES005 = "sms005";
 
     @Autowired
     private RestTemplate restTemplate;
 
     @Autowired
     private SFDCTokenManager tokenManager;
+
+    @PostMapping("/sms005")
+    public Map<String, Object> sms004(@RequestBody Stock request) {
+        logger.info("\n{}", request);
+
+        // URL
+        String SFDCURL = Optional.ofNullable(System.getenv("SFDC_URL"))
+            .orElse("https://app-force-1035--partial.sandbox.my.salesforce.com/services");
+        UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SFDCURL)
+            .pathSegment(URL_APEXREST)
+            .pathSegment(URL_API)
+            .pathSegment(URL_SAP)
+            .pathSegment(PATH_ES005);
+
+        logger.info("#############################################");
+        logger.info("SUCCESS. Request {}", request);
+        logger.info("#############################################");
+
+        // Header
+        HttpHeaders headers = makeHeadersSFDC();
+        // Request Info
+        HttpEntity<Stock> requestEntity = new HttpEntity<>(request, headers);
+
+        return doCallOutSFDC(new ParameterizedTypeReference<Map<String, Object>>() {}, URIBuilder, requestEntity);
+    }
 
     @PostMapping("/sms014")
     public Map<String, Object> sms014(@RequestBody String jsonString) {
@@ -63,12 +90,18 @@ public class SAPInboundInterface {
     }
 
     /*
+    ============================================================================================================ 
+    ============================================================================================================
+    ============================================================================================================
+    */
+
+    /*
         doCallOutSFDC(new ParameterizedTypeReference<Map<String, Object>>() {}, URIBuilder, requestEntity);
         doCallOutSFDC(String.class, URIBuilder, requestEntity);
         doCallOutSFDC(DTO.class, URIBuilder, requestEntity);
     */
     // SFDC 토큰 만료 에러시 재호출 필요. 공통메소드 생성
-    private <T> Map<String, Object> doCallOutSFDC(Object responseType, UriComponentsBuilder URIBuilder, HttpEntity<String> requestEntity) {
+    private <T> Map<String, Object> doCallOutSFDC(Object responseType, UriComponentsBuilder URIBuilder, HttpEntity<T> requestEntity) {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         resultMap.put("code", true);
         resultMap.put("message", "Great. you\'ve got " + ((int) (Math.random() * 100)) + " points");
@@ -81,9 +114,9 @@ public class SAPInboundInterface {
                 requestEntity,
                 getResponseType(responseType)
             );
-
-            resultMap.put("Status Code", response.getStatusCode().value());
-            resultMap.put("message", response.getBody());
+            
+            resultMap.put("status_code", response.getStatusCode().value());
+            resultMap.put("request_body", response.getBody());
 
             logger.info("#############################################");
             logger.info("SUCCESS. Request {}. SFDC: {}", requestEntity.getBody(), response.getBody());
@@ -93,7 +126,7 @@ public class SAPInboundInterface {
             tokenManager.fetchNewToken();
 
             HttpHeaders newHeaders = makeHeadersSFDC();
-            HttpEntity<String> newRequestEntity = new HttpEntity<>(requestEntity.getBody(), newHeaders);
+            HttpEntity<T> newRequestEntity = new HttpEntity<>(requestEntity.getBody(), newHeaders);
     
             response = restTemplate.exchange(
                 URIBuilder.toUriString(),
@@ -102,8 +135,8 @@ public class SAPInboundInterface {
                 getResponseType(responseType)
             );
             
-            resultMap.put("Status Code", response.getStatusCode().value());
-            resultMap.put("message", response.getBody());
+            resultMap.put("status_code", response.getStatusCode().value());
+            resultMap.put("request_body", response.getBody());
 
             logger.info("#############################################");
             logger.info("SUCCESS(Refresh Token). Request {}. SFDC: {}", requestEntity.getBody(), response.getBody());
@@ -111,7 +144,7 @@ public class SAPInboundInterface {
         } catch (HttpClientErrorException e) {
             // HTTP 에러 처리
             resultMap.put("code", false);
-            resultMap.put("Status Code", e.getStatusCode().value());
+            resultMap.put("status_code", e.getStatusCode().value());
             resultMap.put("message", e.getResponseBodyAsString());
         
             logger.error("#############################################");

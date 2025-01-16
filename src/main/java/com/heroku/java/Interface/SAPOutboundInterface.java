@@ -108,6 +108,12 @@ public class SAPOutboundInterface {
 
         return doCallOutSAP(String.class, URIBuilder, requestEntity);
     }
+    
+    /*
+    ============================================================================================================ 
+    ============================================================================================================
+    ============================================================================================================
+    */
 
     private <T> Map<String, Object> doCallOutSAP(Object responseType, UriComponentsBuilder URIBuilder, HttpEntity<String> requestEntity) {
         logger.info("#############################################");
