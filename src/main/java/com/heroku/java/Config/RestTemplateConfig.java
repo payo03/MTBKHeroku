@@ -13,8 +13,8 @@ import org.springframework.web.client.RestTemplate;
 public class RestTemplateConfig {
     private static final Logger logger = LogManager.getLogger(RestTemplateConfig.class);
 
-    @Bean
-    public RestTemplate restTemplate() {
+    @Bean("defaultRestTemplate")
+    public RestTemplate defaultRestTemplate() {
         // TODO : RestClient가 있다고함... 써본적이 없어서 RestTemplate으로 사용했음
 
         try {
@@ -59,5 +59,10 @@ public class RestTemplateConfig {
         } catch (Exception e) {
             throw new RuntimeException("Failed to configure RestTemplate with Quotaguard proxy.", e);
         }
+    }
+
+    @Bean("vpnRestTemplate")
+    public RestTemplate vpnRestTemplate() {
+        return new RestTemplate();
     }
 }

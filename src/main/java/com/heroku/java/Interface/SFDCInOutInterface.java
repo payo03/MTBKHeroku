@@ -21,6 +21,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -36,6 +37,7 @@ public class SFDCInOutInterface {
     private static final Logger logger = LogManager.getLogger(SFDCInOutInterface.class);
 
     @Autowired
+    @Qualifier("defaultRestTemplate")
     private RestTemplate restTemplate;
 
     @PostMapping("/kakao/alim")
@@ -65,7 +67,7 @@ public class SFDCInOutInterface {
                 String.class
             );
             
-            resultMap.put("Status Code", response.getStatusCode().value());
+            resultMap.put("status_code", response.getStatusCode().value());
             resultMap.put("message", response.getBody());
         
             logger.info("#############################################");
@@ -74,7 +76,7 @@ public class SFDCInOutInterface {
         } catch (HttpClientErrorException e) {
             // 일반적인 HTTP 에러 처리
             resultMap.put("code", false);
-            resultMap.put("Status Code", e.getStatusCode().value());
+            resultMap.put("status_code", e.getStatusCode().value());
             resultMap.put("message", e.getResponseBodyAsString());
         
             logger.error("#############################################");
@@ -121,7 +123,7 @@ public class SFDCInOutInterface {
                 String.class
             );
             
-            resultMap.put("Status Code", response.getStatusCode().value());
+            resultMap.put("status_code", response.getStatusCode().value());
             resultMap.put("message", response.getBody());
         
             logger.info("#############################################");
@@ -130,7 +132,7 @@ public class SFDCInOutInterface {
         } catch (HttpClientErrorException e) {
             // 일반적인 HTTP 에러 처리
             resultMap.put("code", false);
-            resultMap.put("Status Code", e.getStatusCode().value());
+            resultMap.put("status_code", e.getStatusCode().value());
             resultMap.put("message", e.getResponseBodyAsString());
         
             logger.error("#############################################");

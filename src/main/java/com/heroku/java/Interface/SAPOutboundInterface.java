@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -34,6 +35,7 @@ public class SAPOutboundInterface {
     private static final String PATH_ES007 = "SMS007";
 
     @Autowired
+    @Qualifier("defaultRestTemplate")
     private RestTemplate restTemplate;
 
     @Autowired
@@ -108,7 +110,7 @@ public class SAPOutboundInterface {
 
         return doCallOutSAP(String.class, URIBuilder, requestEntity);
     }
-    
+
     /*
     ============================================================================================================ 
     ============================================================================================================
@@ -133,7 +135,7 @@ public class SAPOutboundInterface {
                 getResponseType(responseType)
             );
 
-            resultMap.put("Status Code", response.getStatusCode().value());
+            resultMap.put("status_code", response.getStatusCode().value());
             resultMap.put("message", response.getBody());
 
             logger.info("#############################################");
@@ -145,7 +147,7 @@ public class SAPOutboundInterface {
         } catch (HttpClientErrorException e) {
             // HTTP 에러 처리
             resultMap.put("code", false);
-            resultMap.put("Status Code", e.getStatusCode().value());
+            resultMap.put("status_code", e.getStatusCode().value());
             resultMap.put("message", e.getResponseBodyAsString());
         
             logger.error("#############################################");
