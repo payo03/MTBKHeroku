@@ -6,14 +6,18 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heroku.java.Config.HeaderTypeList;
 import com.heroku.java.DTO.FetchTemplateRequest;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -36,6 +40,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class SFDCInOutInterface {
     private static final Logger logger = LogManager.getLogger(SFDCInOutInterface.class);
 
+    private static final List<String> KAKAO_WHITE_LIST = Arrays.asList(
+        Optional.ofNullable(System.getenv("KAKAO_WHITE_LIST")).orElse("821089460314").split(",")
+    );
+
     @Autowired
     @Qualifier("defaultRestTemplate")
     private RestTemplate restTemplate;
@@ -45,6 +53,18 @@ public class SFDCInOutInterface {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         resultMap.put("code", true);
         resultMap.put("message", "Great. you\'ve got " + ((int) (Math.random() * 100)) + " points");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(jsonString);
+        JsonNode destinations = jsonNode.path("messages").get(0).path("destinations");
+        for (JsonNode destinationNode : destinations) {
+            String destination = destinationNode.path("to").asText();
+            if (!KAKAO_WHITE_LIST.contains(destination)) {
+                resultMap.put("code", false);
+                resultMap.put("message", "The destination number " + destination + " is not in the white list.");
+                return resultMap;
+            }
+        }
 
         String infobipURL = Optional.ofNullable(System.getenv("INFOBIP_URL"))
             .orElse("https://pe86m3.api-id.infobip.com/kakao-alim/1/messages");
@@ -127,7 +147,7 @@ public class SFDCInOutInterface {
             resultMap.put("message", response.getBody());
         
             logger.info("#############################################");
-            logger.info("SUCCESS. KAKAO API Call, {}", response.getBody());
+            logger.info("SUCCESS. WSMOKA API Call, {}", response.getBody());
             logger.info("#############################################");
         } catch (HttpClientErrorException e) {
             // 일반적인 HTTP 에러 처리
@@ -144,7 +164,7 @@ public class SFDCInOutInterface {
             resultMap.put("message", e.getMessage());
         
             logger.error("#############################################");
-            logger.error("Fail. KAKAO API Call, {}", e.getMessage());
+            logger.error("Fail. WSMOKA API Call, {}", e.getMessage());
             logger.error("#############################################");
         }
 
