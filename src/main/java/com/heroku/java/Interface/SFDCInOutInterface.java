@@ -57,6 +57,7 @@ public class SFDCInOutInterface {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(jsonString);
         JsonNode destinations = jsonNode.path("messages").get(0).path("destinations");
+        /*
         for (JsonNode destinationNode : destinations) {
             String destination = destinationNode.path("to").asText();
             if (!KAKAO_WHITE_LIST.contains(destination)) {
@@ -65,6 +66,7 @@ public class SFDCInOutInterface {
                 return resultMap;
             }
         }
+        */
 
         String infobipURL = Optional.ofNullable(System.getenv("INFOBIP_URL"))
             .orElse("https://pe86m3.api-id.infobip.com/kakao-alim/1/messages");
