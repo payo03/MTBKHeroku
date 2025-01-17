@@ -67,9 +67,9 @@ public class RestTemplateConfig {
         
         try {
             // 1. Heroku Config. VPN URL 가져오기
-            String vpnURL = System.getenv("VPN_URL");
-            if(vpnURL != null) {
-                URL proxyURL = new URL(vpnURL);
+            String vpnGWURL = System.getenv("VPN_GW_URL");
+            if(vpnGWURL != null) {
+                URL proxyURL = new URL(vpnGWURL);
                 logger.info("#############################################");
                 logger.info("### VPN URL: " + proxyURL + " ###");
                 logger.info("#############################################");
@@ -91,10 +91,6 @@ public class RestTemplateConfig {
                     String auth = user + ":" + password;
                     String encodedAuth = java.util.Base64.getEncoder().encodeToString(auth.getBytes());
                     request.getHeaders().add("Proxy-Authorization", "Basic " + encodedAuth);
-                    
-                    logger.info("#############################################");
-                    logger.info("#############################################");
-                    logger.info("#############################################");
                     
                     return execution.execute(request, body);
                 });
