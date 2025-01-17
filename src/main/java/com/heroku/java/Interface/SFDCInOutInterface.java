@@ -3,7 +3,6 @@ package com.heroku.java.Interface;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -20,7 +19,6 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -48,10 +46,6 @@ public class SFDCInOutInterface {
     @Autowired
     @Qualifier("defaultRestTemplate")
     private RestTemplate restTemplate;
-
-    @Autowired
-    @Qualifier("vpnRestClient")
-    private RestClient restClient;
 
     @PostMapping("/kakao/alim")
     public Map<String, Object> kakaoAlim(@RequestBody String jsonString) throws Exception {
@@ -92,17 +86,6 @@ public class SFDCInOutInterface {
                 requestEntity, 
                 String.class
             );
-
-            /*
-            ResponseEntity<String> response = restClient.post()
-                                        .uri(infobipURL)
-                                        .headers(header -> {
-                                            header.addAll(headers);
-                                        })
-                                        .body(jsonString)
-                                        .retrieve()
-                                        .toEntity(String.class);
-            */
             
             resultMap.put("status_code", response.getStatusCode().value());
             resultMap.put("message", response.getBody());

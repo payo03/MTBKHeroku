@@ -1,6 +1,7 @@
 package com.heroku.java.Interface;
 
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -31,7 +32,11 @@ public class Healthcheck {
 
     @Autowired
     @Qualifier("defaultRestTemplate")
-    private RestTemplate restTemplate; 
+    private RestTemplate restTemplate;
+
+    @Autowired
+    @Qualifier("vpnRestClient")
+    private RestClient restClient;
 
     @Autowired
     private SFDCTokenManager tokenManager;
@@ -65,12 +70,22 @@ public class Healthcheck {
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
         try {
+            /*
             ResponseEntity<HashMap<String, String>> response = restTemplate.exchange(
                 URIBuilder.toUriString(), 
                 HttpMethod.GET, 
                 requestEntity, 
                 new ParameterizedTypeReference<HashMap<String, String>>() {}
             );
+            */
+
+            ResponseEntity<HashMap<String, String>> response = restClient.get()
+                .uri(URIBuilder.toUriString())
+                .headers(header -> {
+                    header.addAll(headers);
+                })
+                .retrieve()
+                .toEntity(new ParameterizedTypeReference<HashMap<String, String>>() {});
 
             Map<String, String> responseMap = response.getBody();
             text = responseMap.get("result");
