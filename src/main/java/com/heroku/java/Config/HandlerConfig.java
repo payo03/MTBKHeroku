@@ -17,6 +17,7 @@ public class HandlerConfig implements WebMvcConfigurer {
     @Autowired
     private RateLimitInterceptor rateLimitInterceptor;
 
+    // 수정
     @Override
     @SuppressWarnings("null")
     public void addInterceptors(InterceptorRegistry registry) {
