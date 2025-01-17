@@ -44,8 +44,7 @@ public class SAPOutboundInterface {
     @GetMapping("/healthcheck")
     public String healthCheck() {
         String text = null;
-        String SAPURL = Optional.ofNullable(System.getenv("SAP_URL"))
-            .orElse("http://3.36.162.185:80/MAN");
+        String SAPURL = System.getenv("SAP_URL");
         UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SAPURL)
             .pathSegment(SAP_HEALTHCHECK);
 
@@ -80,8 +79,7 @@ public class SAPOutboundInterface {
         logger.info("\n{}", jsonString);
 
         // URL
-        String SAP_URL = Optional.ofNullable(System.getenv("SAP_URL"))
-            .orElse("http://3.36.162.185:80/MAN");
+        String SAP_URL = System.getenv("SAP_URL");
         UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SAP_URL)
             .pathSegment(PATH_ES004);
             
@@ -98,8 +96,7 @@ public class SAPOutboundInterface {
         logger.info("\n{}", jsonString);
 
         // URL
-        String SAP_URL = Optional.ofNullable(System.getenv("SAP_URL"))
-            .orElse("http://3.36.162.185:80/MAN");
+        String SAP_URL = System.getenv("SAP_URL");
         UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SAP_URL)
             .pathSegment(PATH_ES007);
             

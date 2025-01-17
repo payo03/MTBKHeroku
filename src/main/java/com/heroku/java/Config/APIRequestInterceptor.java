@@ -14,8 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class APIRequestInterceptor implements HandlerInterceptor {
     private static final Logger logger = LogManager.getLogger(APIRequestInterceptor.class);
 
-    private static final String API_TOKEN = Optional.ofNullable(System.getenv("API_KEY"))
-                                                    .orElse("test");
+    private static final String API_TOKEN = Optional.ofNullable(System.getenv("API_KEY")).orElse("test");
 
     @Override
     @SuppressWarnings("null")
