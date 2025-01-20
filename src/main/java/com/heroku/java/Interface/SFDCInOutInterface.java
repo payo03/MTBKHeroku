@@ -41,7 +41,7 @@ public class SFDCInOutInterface {
     private static final Logger logger = LogManager.getLogger(SFDCInOutInterface.class);
 
     private static final List<String> KAKAO_WHITE_LIST = Arrays.asList(
-        Optional.ofNullable(System.getenv("KAKAO_WHITE_LIST")).orElse("0,1").split(",")
+        Optional.ofNullable(System.getenv("KAKAO_WHITE_LIST")).orElse("0").split(",")
     );
 
     @Autowired
@@ -180,9 +180,7 @@ public class SFDCInOutInterface {
         try (PDDocument document = PDDocument.load(new ByteArrayInputStream(pdfData))) {
 
             // 페이지 수 계산
-            int pageCount = document.getNumberOfPages();
-
-            return pageCount;
+            return document.getNumberOfPages();
         } catch (IOException e) {
             e.printStackTrace();
 
