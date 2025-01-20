@@ -29,6 +29,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RestController
 public class Healthcheck {
     private static final Logger logger = LogManager.getLogger(Healthcheck.class);
+    private static final String APEX_REST = "apexrest";
+    private static final String API = "api";
 
     @Autowired
     @Qualifier("defaultRestTemplate")
@@ -60,15 +62,17 @@ public class Healthcheck {
         // URL
         String SDFCURL = Optional.ofNullable(System.getenv("SFDC_URL"))
             .orElse("https://app-force-1035--partial.sandbox.my.salesforce.com/services");
-        String healthCheckURL = "apexrest/api/check";
         UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SDFCURL)
-            .pathSegment(healthCheckURL);
+            .pathSegment(APEX_REST)
+            .pathSegment(API)
+            .pathSegment("check");
 
         // Header
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + tokenManager.getApiToken());
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+        System.out.println(URIBuilder.toUriString());
         try {
             /*
             ResponseEntity<HashMap<String, String>> response = restTemplate.exchange(
