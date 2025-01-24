@@ -205,15 +205,31 @@ public class SFDCInOutInterface {
         options.addArguments("--window-size=1280,1024");
 
         WebDriver driver = new ChromeDriver(options);
+
+        logger.error("#############################################");
+        logger.error("Before Try, {}", driver);
+        logger.error("#############################################");
         try {
             // URL 열기
             driver.get(url);
 
+            logger.error("#############################################");
+            logger.error("After Try, {}", driver);
+            logger.error("#############################################");
+
             // 스크린샷 찍기
             byte[] screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
 
+            logger.error("#############################################");
+            logger.error("Screenshot, {}", screenshot);
+            logger.error("#############################################");
+
             // PNG 데이터를 Base64로 인코딩
             String base64Image = Base64.getEncoder().encodeToString(screenshot);
+
+            logger.error("#############################################");
+            logger.error("Image, {}", base64Image);
+            logger.error("#############################################");
 
             // Base64 데이터 반환
             return ResponseEntity.ok(base64Image);
