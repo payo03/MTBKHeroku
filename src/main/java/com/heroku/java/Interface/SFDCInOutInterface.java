@@ -195,9 +195,6 @@ public class SFDCInOutInterface {
 
     @PostMapping("/png")
     public ResponseEntity<String> convertURLToPNG(@RequestBody String url) {
-        // 외부 API 호출 URL
-        System.setProperty("webdriver.chrome.driver", "/app/.chromedriver/bin/chromedriver");
-
         // 헤드리스 크롬 설정
         ChromeOptions options = new ChromeOptions();
         options.setBinary("/app/.apt/usr/bin/google-chrome"); // Google Chrome 실행 경로
