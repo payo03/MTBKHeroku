@@ -24,6 +24,9 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
@@ -187,5 +190,40 @@ public class SFDCInOutInterface {
             return 0;
         }
     }
+
+    /*
+    @PostMapping("/png")
+    public ResponseEntity<String> convertURLToPNG(@RequestBody String url) {
+        // 외부 API 호출 URL
+        System.setProperty("webdriver.chrome.driver", "/path/to/chromedriver");
+
+        // 헤드리스 크롬 설정
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless"); // 헤드리스 모드
+        options.addArguments("--disable-gpu");
+        options.addArguments("--window-size=1280,1024");
+
+        WebDriver driver = new ChromeDriver(options);
+        try {
+            // URL 열기
+            driver.get(url);
+
+            // 스크린샷 찍기
+            byte[] screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+
+            // PNG 데이터를 Base64로 인코딩
+            String base64Image = Base64.getEncoder().encodeToString(screenshot);
+
+            // Base64 데이터 반환
+            return ResponseEntity.ok(base64Image);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error: " + e.getMessage());
+        } finally {
+            // WebDriver 종료
+            driver.quit();
+        }
+    }
+    */
 
 }
