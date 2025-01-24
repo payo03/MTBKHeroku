@@ -1,6 +1,7 @@
 package com.heroku.java.Interface;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -185,6 +186,33 @@ public class SFDCInOutInterface {
             e.printStackTrace();
 
             return 0;
+        }
+    }
+
+    @PostMapping("/png")
+    public ResponseEntity<String> convertURLToPNG(@RequestParam String url) {
+        // 외부 API 호출 URL
+        String externalApiUrl = "https://api.screenshotapi.net/capture";
+
+        // API 요청에 필요한 파라미터 설정
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(externalApiUrl)
+            .queryParam("token", "your-api-token")
+            .queryParam("url", url);
+
+        // 외부 API 요청
+        try {
+            ResponseEntity<byte[]> response = restTemplate.getForEntity(builder.toUriString(), byte[].class);
+            if (response.getStatusCode().is2xxSuccessful()) {
+                // Base64로 PNG 데이터를 인코딩하여 반환
+                String base64Image = Base64.getEncoder().encodeToString(response.getBody());
+                return ResponseEntity.ok(base64Image);
+            } else {
+                return ResponseEntity.status(response.getStatusCode())
+                        .body("Failed to convert URL to PNG: " + response.getBody());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error: " + e.getMessage());
         }
     }
 

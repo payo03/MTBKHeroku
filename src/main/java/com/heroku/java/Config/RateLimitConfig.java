@@ -15,19 +15,18 @@ public class RateLimitConfig {
     private Long lastRequestTime = null;
 
     public boolean isRequestAllowed(HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
         String serverName = request.getServerName();
         long currentTime = System.currentTimeMillis();
         lastRequestTime = requestMap.get(serverName);
-        if (
-            lastRequestTime == null || 
-            currentTime - lastRequestTime > THRESHOLD_TIME
-        ) {
+
+        // IF. 호출한적 없음 or 호출시간 > 기준시간
+        if (lastRequestTime == null || currentTime - lastRequestTime > THRESHOLD_TIME) {
             requestMap.put(serverName, currentTime);
 
             return true; // 요청 허용
         }
-
+        
+        String requestURI = request.getRequestURI();
         for (String path : STATIC_PATHS) {
             if (requestURI.startsWith(path)) return true;
         }
