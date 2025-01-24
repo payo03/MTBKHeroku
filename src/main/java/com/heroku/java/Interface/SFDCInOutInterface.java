@@ -26,6 +26,8 @@ import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -191,15 +193,17 @@ public class SFDCInOutInterface {
         }
     }
 
-    /*
     @PostMapping("/png")
     public ResponseEntity<String> convertURLToPNG(@RequestBody String url) {
         // 외부 API 호출 URL
-        System.setProperty("webdriver.chrome.driver", "/path/to/chromedriver");
+        System.setProperty("webdriver.chrome.driver", "/app/.chromedriver/bin/chromedriver");
 
         // 헤드리스 크롬 설정
         ChromeOptions options = new ChromeOptions();
+        options.setBinary("/app/.apt/usr/bin/google-chrome"); // Google Chrome 실행 경로
         options.addArguments("--headless"); // 헤드리스 모드
+        options.addArguments("--no-sandbox"); // Sandbox 비활성화
+        options.addArguments("--disable-dev-shm-usage"); // /dev/shm 메모리 제한 해제
         options.addArguments("--disable-gpu");
         options.addArguments("--window-size=1280,1024");
 
@@ -224,5 +228,4 @@ public class SFDCInOutInterface {
             driver.quit();
         }
     }
-*/
 }
