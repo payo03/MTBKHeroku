@@ -11,8 +11,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heroku.java.Config.HeaderTypeList;
 import com.heroku.java.DTO.FetchTemplateRequest;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Base64;
@@ -197,7 +199,8 @@ public class SFDCInOutInterface {
     public ResponseEntity<String> convertURLToPNG(@RequestBody String url) {
         // 헤드리스 크롬 설정
         ChromeOptions options = new ChromeOptions();
-        options.setBinary("/tmp/build_c65bc56f/.chrome-for-testing/chrome-linux64/chrome"); // Google Chrome 실행 경로
+        String chromePath = findChromePath();
+        options.setBinary(chromePath); // Google Chrome 실행 경로
         options.addArguments("--headless"); // 헤드리스 모드
         options.addArguments("--no-sandbox"); // Sandbox 비활성화
         options.addArguments("--disable-dev-shm-usage"); // /dev/shm 메모리 제한 해제
@@ -206,30 +209,30 @@ public class SFDCInOutInterface {
 
         WebDriver driver = new ChromeDriver(options);
 
-        logger.error("#############################################");
-        logger.error("Before Try, {}", driver);
-        logger.error("#############################################");
+        logger.info("#############################################");
+        logger.info("Before Try, {}", driver);
+        logger.info("#############################################");
         try {
             // URL 열기
             driver.get(url);
 
-            logger.error("#############################################");
-            logger.error("After Try, {}", driver);
-            logger.error("#############################################");
+            logger.info("#############################################");
+            logger.info("After Try, {}", driver);
+            logger.info("#############################################");
 
             // 스크린샷 찍기
             byte[] screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
 
-            logger.error("#############################################");
-            logger.error("Screenshot, {}", screenshot);
-            logger.error("#############################################");
+            logger.info("#############################################");
+            logger.info("Screenshot, {}", screenshot);
+            logger.info("#############################################");
 
             // PNG 데이터를 Base64로 인코딩
             String base64Image = Base64.getEncoder().encodeToString(screenshot);
 
-            logger.error("#############################################");
-            logger.error("Image, {}", base64Image);
-            logger.error("#############################################");
+            logger.info("#############################################");
+            logger.info("Image, {}", base64Image);
+            logger.info("#############################################");
 
             // Base64 데이터 반환
             return ResponseEntity.ok(base64Image);
@@ -240,5 +243,33 @@ public class SFDCInOutInterface {
             // WebDriver 종료
             driver.quit();
         }
+    }
+
+    private String findChromePath() {
+        try {
+
+            Process process = Runtime.getRuntime().exec("find /tmp -name chrome");
+
+            logger.info("#############################################");
+            logger.info("Process, {}", process);
+            logger.info("#############################################");
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+            logger.info("#############################################");
+            logger.info("Reader, {}", reader);
+            logger.info("#############################################");
+
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                if (line.contains("chrome")) {
+                    return line;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
