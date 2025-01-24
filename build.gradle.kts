@@ -18,8 +18,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.apache.pdfbox:pdfbox:2.0.27")
-    implementation("org.seleniumhq.selenium:selenium-java:4.6.0")
-    implementation("org.seleniumhq.selenium:selenium-chrome-driver:4.6.0")
+    implementation("org.seleniumhq.selenium:selenium-java:4.8.0")
+    implementation("org.seleniumhq.selenium:selenium-chrome-driver:4.8.0")
 
     compileOnly("org.projectlombok:lombok:1.18.30")
     annotationProcessor("org.projectlombok:lombok:1.18.30")
