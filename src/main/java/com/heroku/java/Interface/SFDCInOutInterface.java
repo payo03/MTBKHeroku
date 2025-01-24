@@ -1,7 +1,6 @@
 package com.heroku.java.Interface;
 
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -25,6 +24,9 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
@@ -189,31 +191,39 @@ public class SFDCInOutInterface {
         }
     }
 
+    /*
     @PostMapping("/png")
-    public ResponseEntity<String> convertURLToPNG(@RequestParam String url) {
+    public ResponseEntity<String> convertURLToPNG(@RequestBody String url) {
         // 외부 API 호출 URL
-        String externalApiUrl = "https://api.screenshotapi.net/capture";
+        System.setProperty("webdriver.chrome.driver", "/path/to/chromedriver");
 
-        // API 요청에 필요한 파라미터 설정
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(externalApiUrl)
-            .queryParam("token", "your-api-token")
-            .queryParam("url", url);
+        // 헤드리스 크롬 설정
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless"); // 헤드리스 모드
+        options.addArguments("--disable-gpu");
+        options.addArguments("--window-size=1280,1024");
 
-        // 외부 API 요청
+        WebDriver driver = new ChromeDriver(options);
         try {
-            ResponseEntity<byte[]> response = restTemplate.getForEntity(builder.toUriString(), byte[].class);
-            if (response.getStatusCode().is2xxSuccessful()) {
-                // Base64로 PNG 데이터를 인코딩하여 반환
-                String base64Image = Base64.getEncoder().encodeToString(response.getBody());
-                return ResponseEntity.ok(base64Image);
-            } else {
-                return ResponseEntity.status(response.getStatusCode())
-                        .body("Failed to convert URL to PNG: " + response.getBody());
-            }
+            // URL 열기
+            driver.get(url);
+
+            // 스크린샷 찍기
+            byte[] screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+
+            // PNG 데이터를 Base64로 인코딩
+            String base64Image = Base64.getEncoder().encodeToString(screenshot);
+
+            // Base64 데이터 반환
+            return ResponseEntity.ok(base64Image);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body("Error: " + e.getMessage());
+        } finally {
+            // WebDriver 종료
+            driver.quit();
         }
     }
+    */
 
 }
