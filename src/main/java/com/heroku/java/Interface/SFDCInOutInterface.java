@@ -197,7 +197,7 @@ public class SFDCInOutInterface {
     public ResponseEntity<String> convertURLToPNG(@RequestBody String url) {
         // 헤드리스 크롬 설정
         ChromeOptions options = new ChromeOptions();
-        options.setBinary("/app/.apt/usr/bin/google-chrome"); // Google Chrome 실행 경로
+        options.setBinary("/tmp/build_c65bc56f/.chrome-for-testing/chrome-linux64/chrome"); // Google Chrome 실행 경로
         options.addArguments("--headless"); // 헤드리스 모드
         options.addArguments("--no-sandbox"); // Sandbox 비활성화
         options.addArguments("--disable-dev-shm-usage"); // /dev/shm 메모리 제한 해제
