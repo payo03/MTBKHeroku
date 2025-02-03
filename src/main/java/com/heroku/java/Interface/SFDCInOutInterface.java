@@ -247,29 +247,28 @@ public class SFDCInOutInterface {
 
     private String findChromePath() {
         try {
-
-            Process process = Runtime.getRuntime().exec("find /tmp -name chrome");
+            ProcessBuilder processBuilder = new ProcessBuilder("which", "google-chrome");
+            processBuilder.redirectErrorStream(true); // 오류 스트림도 함께 읽기
+            Process process = processBuilder.start();
 
             logger.info("#############################################");
-            logger.info("Process, {}", process);
+            logger.info("process, {}", process);
             logger.info("#############################################");
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
             logger.info("#############################################");
-            logger.info("Reader, {}", reader);
+            logger.info("reader, {}", reader);
             logger.info("#############################################");
-
-            String line;
-
-            while ((line = reader.readLine()) != null) {
-                if (line.contains("chrome")) {
-                    return line;
-                }
-            }
+    
+            String line = reader.readLine();
+            process.waitFor(); // 프로세스 종료 대기
+    
+            return (line != null && !line.isEmpty()) ? line.trim() : null;
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
+    
 }
