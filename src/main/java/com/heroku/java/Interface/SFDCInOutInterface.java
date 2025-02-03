@@ -13,6 +13,7 @@ import com.heroku.java.DTO.FetchTemplateRequest;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -246,33 +247,16 @@ public class SFDCInOutInterface {
     }
 
     private String findChromePath() {
-        try {
-            ProcessBuilder processBuilder = new ProcessBuilder("which", "google-chrome");
-            processBuilder.redirectErrorStream(true); // 오류 스트림도 함께 읽기
-            Process process = processBuilder.start();
-
-            logger.info("#############################################");
-            logger.info("process, {}", process);
-            logger.info("#############################################");
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
-            logger.info("#############################################");
-            logger.info("reader, {}", reader);
-            logger.info("#############################################");
+        // Heroku 환경에서 설치된 Chrome 경로
+        String chromePath = "/app/.apt/usr/bin/google-chrome";
     
-            String line = reader.readLine();
-
-            logger.info("#############################################");
-            logger.info("line, {}", line);
-            logger.info("#############################################");
-            process.waitFor(); // 프로세스 종료 대기
-    
-            return (line != null && !line.isEmpty()) ? line.trim() : null;
-        } catch (Exception e) {
-            e.printStackTrace();
+        // 경로가 유효한지 확인
+        File chromeExecutable = new File(chromePath);
+        if (!chromeExecutable.exists()) {
+            throw new IllegalArgumentException("Chrome not found at path: " + chromePath);
         }
-        return null;
+    
+        return chromePath;
     }
     
 }
