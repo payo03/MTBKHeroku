@@ -21,6 +21,6 @@ dependencies {
     implementation("org.seleniumhq.selenium:selenium-java:4.8.0")
     implementation("org.seleniumhq.selenium:selenium-chrome-driver:4.8.0")
 
-    compileOnly("org.projectlombok:lombok:1.18.30")
-    annotationProcessor("org.projectlombok:lombok:1.18.30")
+    compileOnly("org.projectlombok:lombok:1.18.36")
+    annotationProcessor("org.projectlombok:lombok:1.18.36")
 }
