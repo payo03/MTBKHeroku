@@ -262,6 +262,10 @@ public class SFDCInOutInterface {
             logger.info("#############################################");
     
             String line = reader.readLine();
+
+            logger.info("#############################################");
+            logger.info("line, {}", line);
+            logger.info("#############################################");
             process.waitFor(); // 프로세스 종료 대기
     
             return (line != null && !line.isEmpty()) ? line.trim() : null;
