@@ -57,7 +57,7 @@ public class Healthcheck {
         return "Hello from Spring Boot! / " + body;
     }
 
-    @GetMapping("/sfdc/healthcheck")
+    @GetMapping("/healthcheck/sfdc")
     public Map<String, String> callSFDCHealthCheck() {
         Map<String, String> responseMap = new HashMap<String, String>();
         
