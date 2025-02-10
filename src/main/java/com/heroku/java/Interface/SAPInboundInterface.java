@@ -15,6 +15,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
@@ -45,7 +46,7 @@ public class SAPInboundInterface {
     private SFDCTokenManager tokenManager;
 
     @PostMapping("/sms005")
-    public Map<String, Object> sms004(@RequestBody Stock request) {
+    public Map<String, Object> sms004(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody Stock request) {
         logger.info("\n{}", request);
 
         // URL
@@ -70,7 +71,7 @@ public class SAPInboundInterface {
     }
 
     @PostMapping("/sms014")
-    public Map<String, Object> sms014(@RequestBody String jsonString) {
+    public Map<String, Object> sms014(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody String jsonString) {
         logger.info("\n{}", jsonString);
 
         // URL

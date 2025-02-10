@@ -42,6 +42,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 @RestController
 @RequestMapping("/api")
@@ -57,7 +58,7 @@ public class SFDCInOutInterface {
     private RestTemplate restTemplate;
 
     @PostMapping("/kakao/alim")
-    public Map<String, Object> kakaoAlim(@RequestBody String jsonString) throws Exception {
+    public Map<String, Object> kakaoAlim(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody String jsonString) throws Exception {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         resultMap.put("code", true);
         resultMap.put("message", "Great. you\'ve got " + ((int) (Math.random() * 100)) + " points");
@@ -125,7 +126,7 @@ public class SFDCInOutInterface {
     }
 
     @GetMapping("/wsmoka/template")
-    public Map<String, Object> fetchTemplate(@ModelAttribute FetchTemplateRequest request) throws Exception {
+    public Map<String, Object> fetchTemplate(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @ModelAttribute FetchTemplateRequest request) throws Exception {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         resultMap.put("code", true);
         resultMap.put("message", "Great. you\'ve got " + ((int) (Math.random() * 100)) + " points");
@@ -180,7 +181,7 @@ public class SFDCInOutInterface {
     }
 
     @PostMapping("/getpagenumber")
-    public Integer getPageNumber(@RequestBody String file) throws UnsupportedEncodingException {
+    public Integer getPageNumber(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody String file) throws UnsupportedEncodingException {
         file = file.replaceFirst("file=", "");
         byte[] pdfData = Base64.getDecoder().decode(file);
         
