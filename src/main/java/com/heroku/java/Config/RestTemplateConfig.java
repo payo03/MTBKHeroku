@@ -23,7 +23,7 @@ public class RestTemplateConfig {
             // 1. Heroku Config. Quotaguard 프록시 URL 가져오기
             String staticURL = System.getenv("QUOTAGUARDSTATIC_URL");
             if(staticURL != null) {
-                URL proxyURL = new URL(staticURL);
+                URL proxyURL = new URI(staticURL).toURL();
                 logger.info("#############################################");
                 logger.info("### Proxy URL: " + proxyURL + " ###");
                 logger.info("#############################################");
@@ -69,7 +69,7 @@ public class RestTemplateConfig {
             // 1. Heroku Config. VPN URL 가져오기
             String vpnGWURL = System.getenv("VPN_GW_URL");
             if(vpnGWURL != null) {
-                URL proxyURL = new URL(vpnGWURL);
+                URL proxyURL = new URI(vpnGWURL).toURL();
                 logger.info("#############################################");
                 logger.info("### VPN URL: " + proxyURL + " ###");
                 logger.info("#############################################");

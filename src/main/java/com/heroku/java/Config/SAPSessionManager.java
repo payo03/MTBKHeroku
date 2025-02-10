@@ -2,7 +2,6 @@ package com.heroku.java.Config;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,65 +11,60 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Component
-public class SFDCTokenManager {
-    private static final Logger logger = LogManager.getLogger(SFDCTokenManager.class);
+public class SAPSessionManager {
+    private static final Logger logger = LogManager.getLogger(SAPSessionManager.class);
 
     @Autowired
     @Qualifier("defaultRestTemplate")
     private RestTemplate restTemplate;
 
-    private static final Long EXPIRED_PERIOD = 7140000L;    // 1시간 59분
-    private static final String URL_OAUTH2 = "oauth2";
-    private static final String URL_TOKEN = "token";
+    private static final Long EXPIRED_PERIOD = 1740000L;    // 29분
 
-    private String apiToken;
+    private Map<String, String> cookieMap;
     private Long expiredTime = System.currentTimeMillis() - 1;
 
-    // 현재 토큰반환
-    public String getApiToken() {
+    // 현재 세션반환
+    public Map<String, String> getSessionToken() {
         if (isTokenExpired()) {
             logger.info("#############################################");
             logger.info("currentTime : {}, expiredTime : {}", System.currentTimeMillis(), this.expiredTime);
             logger.info("#############################################");
 
-            fetchNewToken(); 
+            fetchCookieMap(); 
         }
-        return this.apiToken;
+        return this.cookieMap;
     }
 
-    // 토큰갱신
-    public void fetchNewToken() {
+    // 세션갱신
+    public void fetchCookieMap() {
         // URL
-        String SDFCURL = Optional.ofNullable(System.getenv("SFDC_URL"))
-            .orElse("https://app-force-1035--partial.sandbox.my.salesforce.com/services");
-        UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SDFCURL)
-            .pathSegment(URL_OAUTH2)
-            .pathSegment(URL_TOKEN);
+        String SAPWebURL = System.getenv("SAP_WEB_URL");
+        UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SAPWebURL);
 
         // Header
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Content-Type", HeaderTypeList.FORM_URLENCODE);
+        headers.set("Content-Type", HeaderTypeList.APPLICATION_JSON);
 
-        // Body
-        StringBuilder bodyBuilder = new StringBuilder();
-        
+        // Body        
         Map<String, String> requestBody = new HashMap<>();
-        requestBody.put("grant_type", System.getenv("SFDC_TOKEN_TYPE"));
-        requestBody.put("client_id", System.getenv("SFDC_TOKEN_ID"));
-        requestBody.put("client_secret", System.getenv("SFDC_TOKEN_SECRET"));
+        requestBody.put("CompanyDB", System.getenv("COMPANY_DB"));
+        requestBody.put("UserName", System.getenv("USER_NAME"));
+        requestBody.put("Password", System.getenv("PASSWORD"));
 
-        requestBody.forEach((key, value) -> bodyBuilder.append(key).append("=").append(value).append("&"));
-        String body = bodyBuilder.toString();
-        body = body.substring(0, body.length() - 1);
-
-        HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
         try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            String body = objectMapper.writeValueAsString(requestBody);
+            HttpEntity<String> requestEntity = new HttpEntity<>(body);
+
             ResponseEntity<HashMap<String, String>> response = restTemplate.exchange(
                 URIBuilder.toUriString(), 
                 HttpMethod.POST, 
@@ -78,9 +72,8 @@ public class SFDCTokenManager {
                 new ParameterizedTypeReference<HashMap<String, String>>() {}
             );
 
-            Map<String, String> responseMap = response.getBody();
-            this.apiToken = responseMap.get("access_token");
-            this.expiredTime = Long.valueOf(responseMap.get("issued_at")) + EXPIRED_PERIOD;
+            this.cookieMap = response.getBody();
+            this.expiredTime = System.currentTimeMillis() + EXPIRED_PERIOD;
 
             logger.info("#############################################");
             logger.info("SUCCESS. Token Fetch, {}", response.getBody());
