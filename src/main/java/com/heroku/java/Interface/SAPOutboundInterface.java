@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
@@ -41,7 +42,7 @@ public class SAPOutboundInterface {
     private SFDCTokenManager tokenManager;
     
     @GetMapping("/healthcheck")
-    public String healthCheck() {
+    public String healthCheck(@RequestHeader(value="X-API-KEY", required = true) String apiKey) {
         String text = null;
         String SAPURL = System.getenv("SAP_URL");
         UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SAPURL)
@@ -74,7 +75,7 @@ public class SAPOutboundInterface {
     }
 
     @PostMapping("/sms004")
-    public Map<String, Object> sms004(@RequestBody String jsonString) {
+    public Map<String, Object> sms004(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody String jsonString) {
         logger.info("\n{}", jsonString);
 
         // URL
@@ -91,13 +92,29 @@ public class SAPOutboundInterface {
     }
 
     @PostMapping("/sms007")
-    public Map<String, Object> sms007(@RequestBody String jsonString) {
+    public Map<String, Object> sms007(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody String jsonString) {
         logger.info("\n{}", jsonString);
 
         // URL
         String SAP_URL = System.getenv("SAP_URL");
         UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SAP_URL)
             .pathSegment(PATH_ES007);
+            
+        // Header
+        HttpHeaders headers = makeHeadersSAP();
+        // Request Info
+        HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, headers);
+
+        return doCallOutSAP(String.class, URIBuilder, requestEntity);
+    }
+
+    @PostMapping("/login")
+    public Map<String, Object> SAPLogin(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody String jsonString) {
+        logger.info("\n{}", jsonString);
+
+        // URL
+        String SAP_URL = "https://13.124.97.131:50000/b1s/v1/Login";
+        UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SAP_URL);
             
         // Header
         HttpHeaders headers = makeHeadersSAP();
