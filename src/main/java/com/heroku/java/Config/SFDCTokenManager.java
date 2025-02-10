@@ -45,7 +45,6 @@ public class SFDCTokenManager {
     }
 
     // 토큰갱신
-    @SuppressWarnings("null")
     public void fetchNewToken() {
         // URL
         String SDFCURL = Optional.ofNullable(System.getenv("SFDC_URL"))

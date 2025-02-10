@@ -19,7 +19,6 @@ public class HandlerConfig implements WebMvcConfigurer {
     private RateLimitInterceptor rateLimitInterceptor;
 
     @Override
-    @SuppressWarnings("null")
     public void addInterceptors(InterceptorRegistry registry) {
 
         // API 호출경로에 대해 적용
@@ -35,8 +34,7 @@ public class HandlerConfig implements WebMvcConfigurer {
                         "/images/**"      // 정적 이미지
                 ).excludePathPatterns("/error");
     }
-
-    @SuppressWarnings("null")
+    
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
                 .allowedOrigins("https://mtbk-heroku-interface-9a1b73db0729.herokuapp.com")
