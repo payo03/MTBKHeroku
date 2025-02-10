@@ -22,7 +22,6 @@ public class WhiteListInterceptor implements HandlerInterceptor {
     );
 
     @Override
-    @SuppressWarnings("null")
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String requestDomain = request.getServerName();
 

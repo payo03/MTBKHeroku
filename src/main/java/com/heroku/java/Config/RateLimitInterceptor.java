@@ -15,7 +15,6 @@ public class RateLimitInterceptor implements HandlerInterceptor {
     private RateLimitConfig rateLimitConfig;
 
     @Override
-    @SuppressWarnings("null")
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (!rateLimitConfig.isRequestAllowed(request)) {
             response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());

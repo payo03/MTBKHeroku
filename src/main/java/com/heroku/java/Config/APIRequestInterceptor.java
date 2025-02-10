@@ -17,7 +17,6 @@ public class APIRequestInterceptor implements HandlerInterceptor {
     private static final String API_TOKEN = Optional.ofNullable(System.getenv("API_KEY")).orElse("test");
 
     @Override
-    @SuppressWarnings("null")
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String apiKey = request.getHeader("X-API-KEY");
 

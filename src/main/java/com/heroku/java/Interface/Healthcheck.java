@@ -58,7 +58,6 @@ public class Healthcheck {
     }
 
     @GetMapping("/sfdc/healthcheck")
-    @SuppressWarnings("null")
     public Map<String, String> callSFDCHealthCheck() {
         Map<String, String> responseMap = new HashMap<String, String>();
         
