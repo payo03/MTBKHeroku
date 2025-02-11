@@ -180,7 +180,7 @@ public class SFDCInOutInterface {
         return resultMap;
     }
 
-    @PostMapping("/getpagenumber")
+    @PostMapping("/pages")
     public Integer getPageNumber(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody String file) throws UnsupportedEncodingException {
         file = file.replaceFirst("file=", "");
         byte[] pdfData = Base64.getDecoder().decode(file);

@@ -11,7 +11,6 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -28,12 +27,13 @@ public class SAPSessionManager {
     private RestTemplate restTemplate;
 
     private static final Long EXPIRED_PERIOD = 1740000L;    // 29분
+    private static final String URL_LOGIN = "Login";
 
     private Map<String, String> cookieMap;
     private Long expiredTime = System.currentTimeMillis() - 1;
 
     // 현재 세션반환
-    public Map<String, String> getSessionToken() {
+    public Map<String, String> getSessionMap() {
         if (isTokenExpired()) {
             logger.info("#############################################");
             logger.info("currentTime : {}, expiredTime : {}", System.currentTimeMillis(), this.expiredTime);
@@ -48,7 +48,8 @@ public class SAPSessionManager {
     public void fetchCookieMap() {
         // URL
         String SAPWebURL = System.getenv("SAP_WEB_URL");
-        UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SAPWebURL);
+        UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SAPWebURL)
+            .pathSegment(URL_LOGIN);
 
         // Header
         HttpHeaders headers = new HttpHeaders();
@@ -72,15 +73,19 @@ public class SAPSessionManager {
                 new ParameterizedTypeReference<HashMap<String, String>>() {}
             );
 
-            this.cookieMap = response.getBody();
+            Map<String, String> responseMap = response.getBody();
+            this.cookieMap = new HashMap<String, String>();
+
+            this.cookieMap.put("B1SESSION", responseMap.get("SessionId"));
+            this.cookieMap.put("ROUTEID", responseMap.get(".node4"));
             this.expiredTime = System.currentTimeMillis() + EXPIRED_PERIOD;
 
             logger.info("#############################################");
-            logger.info("SUCCESS. Token Fetch, {}", response.getBody());
+            logger.info("SUCCESS. Session Fetch, {}", response.getBody());
             logger.info("#############################################");
         } catch (Exception e) {
             logger.error("#############################################");
-            logger.error("Fail. Token Fetch, {}", e.getMessage());
+            logger.error("Fail. Session Fetch, {}", e.getMessage());
             logger.error("#############################################");
         }
     }

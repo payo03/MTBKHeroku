@@ -2,6 +2,7 @@ package com.heroku.java.Interface;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,8 +23,11 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heroku.java.Config.HeaderTypeList;
-import com.heroku.java.Config.SFDCTokenManager;
+import com.heroku.java.Config.SAPSessionManager;
+import com.heroku.java.DTO.RegisterInfo;
 
 @RestController
 @RequestMapping("/api/sap")
@@ -33,13 +37,14 @@ public class SAPOutboundInterface {
     private static final String SAP_HEALTHCHECK = "GetTest";
     private static final String PATH_ES004 = "SMS004";
     private static final String PATH_ES007 = "SMS007";
+    private static final String URL_REGISTER = "MAN_VACCTNO('ADD')";
 
     @Autowired
     @Qualifier("defaultRestTemplate")
     private RestTemplate restTemplate;
 
     @Autowired
-    private SFDCTokenManager tokenManager;
+    private SAPSessionManager sessionManager;
     
     @GetMapping("/healthcheck")
     public String healthCheck(@RequestHeader(value="X-API-KEY", required = true) String apiKey) {
@@ -108,16 +113,19 @@ public class SAPOutboundInterface {
         return doCallOutSAP(String.class, URIBuilder, requestEntity);
     }
 
-    @PostMapping("/login")
-    public Map<String, Object> SAPLogin(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody String jsonString) {
-        logger.info("\n{}", jsonString);
+    @PostMapping("/register")
+    public Map<String, Object> SAPLogin(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody RegisterInfo registerInfo) throws JsonProcessingException {
+        logger.info("\n{}", registerInfo);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(registerInfo);        
 
         // URL
-        String SAP_URL = "https://13.124.97.131:50000/b1s/v1/Login";
-        UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SAP_URL);
+        String SAPWebURL = System.getenv("SAP_WEB_URL");
+        UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SAPWebURL)
+            .pathSegment(URL_REGISTER);
             
         // Header
-        HttpHeaders headers = makeHeadersSAP();
+        HttpHeaders headers = makeHeadersSAPWeb();
         // Request Info
         HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, headers);
 
@@ -130,7 +138,7 @@ public class SAPOutboundInterface {
     ============================================================================================================
     */
 
-    private <T> Map<String, Object> doCallOutSAP(Object responseType, UriComponentsBuilder URIBuilder, HttpEntity<String> requestEntity) {
+    private <T> Map<String, Object> doCallOutSAP(Object responseType, UriComponentsBuilder URIBuilder, HttpEntity<T> requestEntity) {
         logger.info("#############################################");
         logger.info("Endpoint URL. {}", URIBuilder.toUriString());
         logger.info("#############################################");
@@ -181,8 +189,21 @@ public class SAPOutboundInterface {
     // Header Setting
     private HttpHeaders makeHeadersSAP() {
         HttpHeaders header = new HttpHeaders();
-        header.set("Authorization", "Bearer " + tokenManager.getApiToken());
         header.set("Content-Type", HeaderTypeList.APPLICATION_JSON);
+
+        return header;
+    }
+
+    // Header Setting
+    private HttpHeaders makeHeadersSAPWeb() {
+        Map<String, String> sessionMap = sessionManager.getSessionMap();
+        String cookieValue = sessionMap.entrySet().stream()
+            .map(entry -> entry.getKey() + "=" + entry.getValue())
+            .collect(Collectors.joining(";"));
+        
+        HttpHeaders header = new HttpHeaders();
+        header.set("Content-Type", HeaderTypeList.APPLICATION_JSON);
+        header.set("Cookie", cookieValue);
 
         return header;
     }
