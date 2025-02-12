@@ -2,7 +2,6 @@ package com.heroku.java.Interface;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,10 +23,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heroku.java.Config.HeaderTypeList;
-import com.heroku.java.Config.SAPSessionManager;
-import com.heroku.java.DTO.RegisterInfo;
 
 @RestController
 @RequestMapping("/api/sap")
@@ -37,14 +33,11 @@ public class SAPOutboundInterface {
     private static final String SAP_HEALTHCHECK = "GetTest";
     private static final String PATH_ES004 = "SMS004";
     private static final String PATH_ES007 = "SMS007";
-    private static final String URL_REGISTER = "MAN_VACCTNO('ADD')";
+    private static final String PATH_ES018 = "SMS018";
 
     @Autowired
     @Qualifier("defaultRestTemplate")
     private RestTemplate restTemplate;
-
-    @Autowired
-    private SAPSessionManager sessionManager;
     
     @GetMapping("/healthcheck")
     public String healthCheck(@RequestHeader(value="X-API-KEY", required = true) String apiKey) {
@@ -113,19 +106,17 @@ public class SAPOutboundInterface {
         return doCallOutSAP(String.class, URIBuilder, requestEntity);
     }
 
-    @PostMapping("/register")
-    public Map<String, Object> SAPLogin(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody RegisterInfo registerInfo) throws JsonProcessingException {
-        logger.info("\n{}", registerInfo);
-        ObjectMapper objectMapper = new ObjectMapper();
-        String jsonString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(registerInfo);        
+    @PostMapping("/sms018")
+    public Map<String, Object> sms018(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody String jsonString) throws JsonProcessingException {
+        logger.info("\n{}", jsonString);
 
         // URL
-        String SAPWebURL = System.getenv("SAP_WEB_URL");
-        UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SAPWebURL)
-            .pathSegment(URL_REGISTER);
+        String SAP_URL = System.getenv("SAP_URL");
+        UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SAP_URL)
+            .pathSegment(PATH_ES018);
             
         // Header
-        HttpHeaders headers = makeHeadersSAPWeb();
+        HttpHeaders headers = makeHeadersSAP();
         // Request Info
         HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, headers);
 
@@ -190,20 +181,6 @@ public class SAPOutboundInterface {
     private HttpHeaders makeHeadersSAP() {
         HttpHeaders header = new HttpHeaders();
         header.set("Content-Type", HeaderTypeList.APPLICATION_JSON);
-
-        return header;
-    }
-
-    // Header Setting
-    private HttpHeaders makeHeadersSAPWeb() {
-        Map<String, String> sessionMap = sessionManager.getSessionMap();
-        String cookieValue = sessionMap.entrySet().stream()
-            .map(entry -> entry.getKey() + "=" + entry.getValue())
-            .collect(Collectors.joining(";"));
-        
-        HttpHeaders header = new HttpHeaders();
-        header.set("Content-Type", HeaderTypeList.APPLICATION_JSON);
-        header.set("Cookie", cookieValue);
 
         return header;
     }
