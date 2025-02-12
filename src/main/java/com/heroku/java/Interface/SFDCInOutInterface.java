@@ -11,11 +11,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heroku.java.Config.HeaderTypeList;
 import com.heroku.java.DTO.FetchTemplateRequest;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Base64;
@@ -180,7 +178,7 @@ public class SFDCInOutInterface {
         return resultMap;
     }
 
-    @PostMapping("/getpagenumber")
+    @PostMapping("/pages")
     public Integer getPageNumber(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody String file) throws UnsupportedEncodingException {
         file = file.replaceFirst("file=", "");
         byte[] pdfData = Base64.getDecoder().decode(file);

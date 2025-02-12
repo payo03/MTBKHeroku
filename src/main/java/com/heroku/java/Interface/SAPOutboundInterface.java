@@ -22,8 +22,8 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.heroku.java.Config.HeaderTypeList;
-import com.heroku.java.Config.SFDCTokenManager;
 
 @RestController
 @RequestMapping("/api/sap")
@@ -33,13 +33,11 @@ public class SAPOutboundInterface {
     private static final String SAP_HEALTHCHECK = "GetTest";
     private static final String PATH_ES004 = "SMS004";
     private static final String PATH_ES007 = "SMS007";
+    private static final String PATH_ES018 = "SMS018";
 
     @Autowired
     @Qualifier("defaultRestTemplate")
     private RestTemplate restTemplate;
-
-    @Autowired
-    private SFDCTokenManager tokenManager;
     
     @GetMapping("/healthcheck")
     public String healthCheck(@RequestHeader(value="X-API-KEY", required = true) String apiKey) {
@@ -108,13 +106,14 @@ public class SAPOutboundInterface {
         return doCallOutSAP(String.class, URIBuilder, requestEntity);
     }
 
-    @PostMapping("/login")
-    public Map<String, Object> SAPLogin(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody String jsonString) {
+    @PostMapping("/sms018")
+    public Map<String, Object> sms018(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody String jsonString) throws JsonProcessingException {
         logger.info("\n{}", jsonString);
 
         // URL
-        String SAP_URL = "https://13.124.97.131:50000/b1s/v1/Login";
-        UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SAP_URL);
+        String SAP_URL = System.getenv("SAP_URL");
+        UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SAP_URL)
+            .pathSegment(PATH_ES018);
             
         // Header
         HttpHeaders headers = makeHeadersSAP();
@@ -130,7 +129,7 @@ public class SAPOutboundInterface {
     ============================================================================================================
     */
 
-    private <T> Map<String, Object> doCallOutSAP(Object responseType, UriComponentsBuilder URIBuilder, HttpEntity<String> requestEntity) {
+    private <T> Map<String, Object> doCallOutSAP(Object responseType, UriComponentsBuilder URIBuilder, HttpEntity<T> requestEntity) {
         logger.info("#############################################");
         logger.info("Endpoint URL. {}", URIBuilder.toUriString());
         logger.info("#############################################");
@@ -181,7 +180,6 @@ public class SAPOutboundInterface {
     // Header Setting
     private HttpHeaders makeHeadersSAP() {
         HttpHeaders header = new HttpHeaders();
-        header.set("Authorization", "Bearer " + tokenManager.getApiToken());
         header.set("Content-Type", HeaderTypeList.APPLICATION_JSON);
 
         return header;
