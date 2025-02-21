@@ -106,7 +106,24 @@ public class SAPOutboundInterface {
         return doCallOutSAP(String.class, URIBuilder, requestEntity);
     }
 
-    @PostMapping("/sms018")
+    @PostMapping("/sms019")
+    public Map<String, Object> sms019(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody String jsonString) throws JsonProcessingException {
+        logger.info("\n{}", jsonString);
+
+        // URL
+        String SAP_URL = System.getenv("SAP_URL");
+        UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SAP_URL)
+            .pathSegment(PATH_ES018);
+            
+        // Header
+        HttpHeaders headers = makeHeadersSAP();
+        // Request Info
+        HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, headers);
+
+        return doCallOutSAP(String.class, URIBuilder, requestEntity);
+    }
+
+    @PostMapping("/sms019")
     public Map<String, Object> sms018(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody String jsonString) throws JsonProcessingException {
         logger.info("\n{}", jsonString);
 
