@@ -6,13 +6,13 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heroku.java.Config.HeaderTypeList;
 import com.heroku.java.DTO.FetchTemplateRequest;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
@@ -25,11 +25,6 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
@@ -50,6 +45,8 @@ public class SFDCInOutInterface {
     private static final List<String> KAKAO_WHITE_LIST = Arrays.asList(
         Optional.ofNullable(System.getenv("KAKAO_WHITE_LIST")).orElse("0").split(",")
     );
+
+    private static final String PATH_ES019 = "SMS019";
 
     @Autowired
     @Qualifier("defaultRestTemplate")
@@ -194,68 +191,58 @@ public class SFDCInOutInterface {
             return 0;
         }
     }
+    
+    @PostMapping("/sap/sms019")
+    public Map<String, Object> sms019(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody String jsonString) throws JsonProcessingException {
+        logger.info("\n{}", jsonString);
 
-    @PostMapping("/png")
-    public ResponseEntity<String> convertURLToPNG(@RequestBody String url) {
-        // 헤드리스 크롬 설정
-        ChromeOptions options = new ChromeOptions();
-        String chromePath = findChromePath();
-        options.setBinary(chromePath); // Google Chrome 실행 경로
-        options.addArguments("--headless"); // 헤드리스 모드
-        options.addArguments("--no-sandbox"); // Sandbox 비활성화
-        options.addArguments("--disable-dev-shm-usage"); // /dev/shm 메모리 제한 해제
-        options.addArguments("--disable-gpu");
-        options.addArguments("--window-size=1280,1024");
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        resultMap.put("code", true);
+        resultMap.put("message", "Great. you\'ve got " + ((int) (Math.random() * 100)) + " points");
 
-        WebDriver driver = new ChromeDriver(options);
-
-        logger.info("#############################################");
-        logger.info("Before Try, {}", driver);
-        logger.info("#############################################");
+        // URL
+        String SAP_URL = System.getenv("SAP_URL");
+        UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SAP_URL)
+            .pathSegment(PATH_ES019);
+            
+        // Header
+        HttpHeaders headers = SAPOutboundInterface.makeHeadersSAP();
+        // Request Info
+        HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, headers);
         try {
-            // URL 열기
-            driver.get(url);
-
+            ResponseEntity<String> response = restTemplate.exchange(
+                URIBuilder.toUriString(),
+                HttpMethod.POST,
+                requestEntity,
+                String.class
+            );
+            
+            resultMap.put("status_code", response.getStatusCode().value());
+            resultMap.put("message", response.getBody());
+        
             logger.info("#############################################");
-            logger.info("After Try, {}", driver);
+            logger.info("SUCCESS. SAP API Call, {}", response.getBody());
             logger.info("#############################################");
-
-            // 스크린샷 찍기
-            byte[] screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
-
-            logger.info("#############################################");
-            logger.info("Screenshot, {}", screenshot);
-            logger.info("#############################################");
-
-            // PNG 데이터를 Base64로 인코딩
-            String base64Image = Base64.getEncoder().encodeToString(screenshot);
-
-            logger.info("#############################################");
-            logger.info("Image, {}", base64Image);
-            logger.info("#############################################");
-
-            // Base64 데이터 반환
-            return ResponseEntity.ok(base64Image);
+        } catch (HttpClientErrorException e) {
+            // 일반적인 HTTP 에러 처리
+            resultMap.put("code", false);
+            resultMap.put("status_code", e.getStatusCode().value());
+            resultMap.put("message", e.getResponseBodyAsString());
+        
+            logger.error("#############################################");
+            logger.error("Error. Request {}. SFDC: {}", jsonString, e.getResponseBodyAsString());
+            logger.error("#############################################");
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body("Error: " + e.getMessage());
-        } finally {
-            // WebDriver 종료
-            driver.quit();
+            // 예외 처리
+            resultMap.put("code", false);
+            resultMap.put("message", e.getMessage());
+        
+            logger.error("#############################################");
+            logger.error("Fail. SAP API Call, {}", e.getMessage());
+            logger.error("#############################################");
         }
-    }
 
-    private String findChromePath() {
-        // Heroku 환경에서 설치된 Chrome 경로
-        String chromePath = "/app/.apt/usr/bin/google-chrome";
-    
-        // 경로가 유효한지 확인
-        File chromeExecutable = new File(chromePath);
-        if (!chromeExecutable.exists()) {
-            throw new IllegalArgumentException("Chrome not found at path: " + chromePath);
-        }
-    
-        return chromePath;
+        return resultMap;
     }
     
 }
