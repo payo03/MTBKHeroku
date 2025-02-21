@@ -34,11 +34,11 @@ public class SAPOutboundInterface {
     private static final String PATH_ES004 = "SMS004";
     private static final String PATH_ES007 = "SMS007";
     private static final String PATH_ES018 = "SMS018";
-    private static final String PATH_ES019 = "SMS019";
 
     @Autowired
     @Qualifier("defaultRestTemplate")
     private RestTemplate restTemplate;
+
     
     @GetMapping("/healthcheck")
     public String healthCheck(@RequestHeader(value="X-API-KEY", required = true) String apiKey) {
@@ -107,31 +107,14 @@ public class SAPOutboundInterface {
         return doCallOutSAP(String.class, URIBuilder, requestEntity);
     }
 
-    @PostMapping("/sms019")
-    public Map<String, Object> sms019(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody String jsonString) throws JsonProcessingException {
-        logger.info("\n{}", jsonString);
-
-        // URL
-        String SAP_URL = System.getenv("SAP_URL");
-        UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SAP_URL)
-            .pathSegment(PATH_ES018);
-            
-        // Header
-        HttpHeaders headers = makeHeadersSAP();
-        // Request Info
-        HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, headers);
-
-        return doCallOutSAP(String.class, URIBuilder, requestEntity);
-    }
-
-    @PostMapping("/sms019")
+    @PostMapping("/sms018")
     public Map<String, Object> sms018(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody String jsonString) throws JsonProcessingException {
         logger.info("\n{}", jsonString);
 
         // URL
         String SAP_URL = System.getenv("SAP_URL");
         UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SAP_URL)
-            .pathSegment(PATH_ES019);
+            .pathSegment(PATH_ES018);
             
         // Header
         HttpHeaders headers = makeHeadersSAP();
@@ -196,7 +179,7 @@ public class SAPOutboundInterface {
     }
 
     // Header Setting
-    private HttpHeaders makeHeadersSAP() {
+    public static HttpHeaders makeHeadersSAP() {
         HttpHeaders header = new HttpHeaders();
         header.set("Content-Type", HeaderTypeList.APPLICATION_JSON);
 
