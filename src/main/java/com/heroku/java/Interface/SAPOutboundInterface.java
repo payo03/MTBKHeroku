@@ -34,6 +34,7 @@ public class SAPOutboundInterface {
     private static final String PATH_ES004 = "SMS004";
     private static final String PATH_ES007 = "SMS007";
     private static final String PATH_ES018 = "SMS018";
+    private static final String PATH_ES019 = "SMS019";
 
     @Autowired
     @Qualifier("defaultRestTemplate")
@@ -130,7 +131,7 @@ public class SAPOutboundInterface {
         // URL
         String SAP_URL = System.getenv("SAP_URL");
         UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SAP_URL)
-            .pathSegment(PATH_ES018);
+            .pathSegment(PATH_ES019);
             
         // Header
         HttpHeaders headers = makeHeadersSAP();
