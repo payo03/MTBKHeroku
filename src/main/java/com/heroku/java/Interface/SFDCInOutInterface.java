@@ -192,7 +192,7 @@ public class SFDCInOutInterface {
         }
     }
     
-    @PostMapping("/sap/sms019")
+    @PostMapping("/sap/sms999")
     public Map<String, Object> sms019(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody String jsonString) throws JsonProcessingException {
         logger.info("\n{}", jsonString);
 
