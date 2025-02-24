@@ -115,7 +115,7 @@ public class SAPInboundInterface {
         // Request Info
         HttpEntity<PaymentInfo> requestEntity = new HttpEntity<>(request, headers);
 
-        return doCallOutSFDC(String.class, URIBuilder, requestEntity);
+        return doCallOutSFDC(new ParameterizedTypeReference<Map<String, Object>>() {}, URIBuilder, requestEntity);
     }
 
     /*
