@@ -24,6 +24,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.heroku.java.Config.HeaderTypeList;
 import com.heroku.java.Config.SFDCTokenManager;
+import com.heroku.java.DTO.PaymentInfo;
 import com.heroku.java.DTO.Stock;
 
 @RestController
@@ -37,6 +38,7 @@ public class SAPInboundInterface {
 
     private static final String PATH_ES014 = "sms014";
     private static final String PATH_ES005 = "sms005";
+    private static final String PATH_ES019 = "sms019";
 
     @Autowired
     @Qualifier("defaultRestTemplate")
@@ -87,6 +89,31 @@ public class SAPInboundInterface {
         HttpHeaders headers = makeHeadersSFDC();
         // Request Info
         HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, headers);
+
+        return doCallOutSFDC(String.class, URIBuilder, requestEntity);
+    }
+
+    @PostMapping("/sms019")
+    public Map<String, Object> sms019(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody PaymentInfo request) {
+        logger.info("\n{}", request);
+
+        // URL
+        String SFDCURL = Optional.ofNullable(System.getenv("SFDC_URL"))
+            .orElse("https://app-force-1035--partial.sandbox.my.salesforce.com/services");
+        UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SFDCURL)
+            .pathSegment(URL_APEXREST)
+            .pathSegment(URL_API)
+            .pathSegment(URL_SAP)
+            .pathSegment(PATH_ES019);
+
+        logger.info("#############################################");
+        logger.info("SUCCESS. Request {}", request);
+        logger.info("#############################################");
+
+        // Header
+        HttpHeaders headers = makeHeadersSFDC();
+        // Request Info
+        HttpEntity<PaymentInfo> requestEntity = new HttpEntity<>(request, headers);
 
         return doCallOutSFDC(String.class, URIBuilder, requestEntity);
     }
