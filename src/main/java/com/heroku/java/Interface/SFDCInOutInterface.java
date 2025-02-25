@@ -55,7 +55,7 @@ public class SFDCInOutInterface {
     private static final String URL_SAP = "sap";
     private static final String URL_ASYNC = "async";
 
-    private static final String PATH_ES010 = "SMS010";
+    private static final String PATH_ES010 = "sms010";
 
     @Autowired
     @Qualifier("defaultRestTemplate")
