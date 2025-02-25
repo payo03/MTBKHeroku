@@ -33,6 +33,9 @@ public class SAPOutboundInterface {
     private static final String SAP_HEALTHCHECK = "GetTest";
     private static final String PATH_ES004 = "SMS004";
     private static final String PATH_ES007 = "SMS007";
+    private static final String PATH_ES010 = "SMS010";
+    private static final String PATH_ES011 = "SMS011";
+    private static final String PATH_ES013 = "SMS013";
     private static final String PATH_ES018 = "SMS018";
 
     @Autowired
@@ -98,6 +101,57 @@ public class SAPOutboundInterface {
         String SAP_URL = System.getenv("SAP_URL");
         UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SAP_URL)
             .pathSegment(PATH_ES007);
+            
+        // Header
+        HttpHeaders headers = makeHeadersSAP();
+        // Request Info
+        HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, headers);
+
+        return doCallOutSAP(String.class, URIBuilder, requestEntity);
+    }
+
+    @PostMapping("/sms010")
+    public Map<String, Object> sms010(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody String jsonString) {
+        logger.info("\n{}", jsonString);
+
+        // URL
+        String SAP_URL = System.getenv("SAP_URL");
+        UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SAP_URL)
+            .pathSegment(PATH_ES010);
+            
+        // Header
+        HttpHeaders headers = makeHeadersSAP();
+        // Request Info
+        HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, headers);
+
+        return doCallOutSAP(String.class, URIBuilder, requestEntity);
+    }
+
+    @PostMapping("/sms011")
+    public Map<String, Object> sms011(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody String jsonString) {
+        logger.info("\n{}", jsonString);
+
+        // URL
+        String SAP_URL = System.getenv("SAP_URL");
+        UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SAP_URL)
+            .pathSegment(PATH_ES011);
+            
+        // Header
+        HttpHeaders headers = makeHeadersSAP();
+        // Request Info
+        HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, headers);
+
+        return doCallOutSAP(String.class, URIBuilder, requestEntity);
+    }
+
+    @PostMapping("/sms013")
+    public Map<String, Object> sms013(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody String jsonString) {
+        logger.info("\n{}", jsonString);
+
+        // URL
+        String SAP_URL = System.getenv("SAP_URL");
+        UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SAP_URL)
+            .pathSegment(PATH_ES013);
             
         // Header
         HttpHeaders headers = makeHeadersSAP();
