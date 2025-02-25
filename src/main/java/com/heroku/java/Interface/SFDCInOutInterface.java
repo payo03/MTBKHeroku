@@ -53,10 +53,9 @@ public class SFDCInOutInterface {
     private static final String URL_APEXREST = "apexrest";
     private static final String URL_API = "api";
     private static final String URL_SAP = "sap";
+    private static final String URL_ASYNC = "async";
 
     private static final String PATH_ES010 = "SMS010";
-    private static final String PATH_ES011 = "SMS011";
-    private static final String PATH_ES013 = "SMS013";
 
     @Autowired
     @Qualifier("defaultRestTemplate")
@@ -227,6 +226,7 @@ public class SFDCInOutInterface {
             .pathSegment(URL_APEXREST)
             .pathSegment(URL_API)
             .pathSegment(URL_SAP)
+            .pathSegment(URL_ASYNC)
             .pathSegment(PATH_ES010);
 
         this.AsyncDoCallOutSAP(String.class, URIBuilderSAP, URIBuilderSFDC, requestEntity);

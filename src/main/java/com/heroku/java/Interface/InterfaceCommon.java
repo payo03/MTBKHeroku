@@ -1,16 +1,11 @@
 package com.heroku.java.Interface;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 
 import com.heroku.java.Config.HeaderTypeList;
-import com.heroku.java.Config.SFDCTokenManager;
 
 public class InterfaceCommon {
-    
-    @Autowired
-    private SFDCTokenManager tokenManager;
 
     // Generic Type을통한 Response Type 동적설정
     @SuppressWarnings("unchecked")
