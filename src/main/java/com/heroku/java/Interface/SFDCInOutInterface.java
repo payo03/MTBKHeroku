@@ -202,13 +202,18 @@ public class SFDCInOutInterface {
     }
     
     @PostMapping("/sap/async/sms010")
-    public Map<String, Object> asyncSMS010(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody String jsonString) {
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> asyncSMS010(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody String jsonString) throws Exception {
         logger.info("\n{}", jsonString);
         
         Map<String, Object> resultMap = new HashMap<String, Object>();
         resultMap.put("code", true);
         resultMap.put("message", "Great. you\'ve got " + ((int) (Math.random() * 100)) + " points");
 
+        Map<String, Object> jsonMap = InterfaceCommon.extractJSON(jsonString);
+        List<String> idList = (List<String>) jsonMap.get("idList");
+        String parseString = (String) jsonMap.get("parseString");
+        
         // URL
         String SAP_URL = System.getenv("SAP_URL");
         UriComponentsBuilder URIBuilderSAP = UriComponentsBuilder.fromHttpUrl(SAP_URL)
@@ -217,7 +222,7 @@ public class SFDCInOutInterface {
         // Header
         HttpHeaders headers = InterfaceCommon.makeHeadersSAP();
         // Request Info
-        HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, headers);
+        HttpEntity<String> requestEntity = new HttpEntity<>(parseString, headers);
 
         // URL
         String SFDCURL = Optional.ofNullable(System.getenv("SFDC_URL"))
@@ -229,12 +234,12 @@ public class SFDCInOutInterface {
             .pathSegment(URL_ASYNC)
             .pathSegment(PATH_ES010);
 
-        this.AsyncDoCallOutSAP(String.class, URIBuilderSAP, URIBuilderSFDC, requestEntity);
+        this.AsyncDoCallOutSAP(String.class, URIBuilderSAP, URIBuilderSFDC, requestEntity, idList);
         return resultMap;
     }
 
     @Async
-    private <T> void AsyncDoCallOutSAP(Object responseType, UriComponentsBuilder URIBuilderSAP, UriComponentsBuilder URIBuilderSFDC, HttpEntity<T> requestEntity) {
+    private <T> void AsyncDoCallOutSAP(Object responseType, UriComponentsBuilder URIBuilderSAP, UriComponentsBuilder URIBuilderSFDC, HttpEntity<T> requestEntity, Object returnObj) {
         logger.info("#############################################");
         logger.info("Endpoint URL. {}", URIBuilderSAP.toUriString());
         logger.info("#############################################");
@@ -250,6 +255,7 @@ public class SFDCInOutInterface {
                 InterfaceCommon.getResponseType(responseType)
             );
             responseBody = responseEntity.getBody();
+            if(returnObj != null) responseBody = InterfaceCommon.parseJSONNode(responseBody, returnObj);
 
             logger.info("#############################################");
             logger.info("SUCCESS. Request {}. SAP: {}", requestEntity.getBody(), responseBody);
