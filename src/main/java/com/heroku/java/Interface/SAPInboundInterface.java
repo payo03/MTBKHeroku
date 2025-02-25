@@ -22,7 +22,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.heroku.java.Config.HeaderTypeList;
 import com.heroku.java.Config.SFDCTokenManager;
 import com.heroku.java.DTO.PaymentInfo;
 import com.heroku.java.DTO.Stock;
@@ -65,7 +64,8 @@ public class SAPInboundInterface {
         logger.info("#############################################");
 
         // Header
-        HttpHeaders headers = makeHeadersSFDC();
+        String token = tokenManager.getApiToken();
+        HttpHeaders headers = InterfaceCommon.makeHeadersSFDC(token);
         // Request Info
         HttpEntity<Stock> requestEntity = new HttpEntity<>(request, headers);
 
@@ -86,7 +86,8 @@ public class SAPInboundInterface {
             .pathSegment(PATH_ES014);
 
         // Header
-        HttpHeaders headers = makeHeadersSFDC();
+        String token = tokenManager.getApiToken();
+        HttpHeaders headers = InterfaceCommon.makeHeadersSFDC(token);
         // Request Info
         HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, headers);
 
@@ -111,7 +112,8 @@ public class SAPInboundInterface {
         logger.info("#############################################");
 
         // Header
-        HttpHeaders headers = makeHeadersSFDC();
+        String token = tokenManager.getApiToken();
+        HttpHeaders headers = InterfaceCommon.makeHeadersSFDC(token);
         // Request Info
         HttpEntity<PaymentInfo> requestEntity = new HttpEntity<>(request, headers);
 
@@ -141,7 +143,7 @@ public class SAPInboundInterface {
                 URIBuilder.toUriString(),
                 HttpMethod.POST,
                 requestEntity,
-                getResponseType(responseType)
+                InterfaceCommon.getResponseType(responseType)
             );
             
             resultMap.put("status_code", response.getStatusCode().value());
@@ -154,14 +156,15 @@ public class SAPInboundInterface {
             // Unauthorized 예외 처리: 토큰 갱신 후 재시도
             tokenManager.fetchNewToken();
 
-            HttpHeaders newHeaders = makeHeadersSFDC();
+            String token = tokenManager.getApiToken();
+            HttpHeaders newHeaders = InterfaceCommon.makeHeadersSFDC(token);
             HttpEntity<T> newRequestEntity = new HttpEntity<>(requestEntity.getBody(), newHeaders);
     
             response = restTemplate.exchange(
                 URIBuilder.toUriString(),
                 HttpMethod.POST,
                 newRequestEntity,
-                getResponseType(responseType)
+                InterfaceCommon.getResponseType(responseType)
             );
             
             resultMap.put("status_code", response.getStatusCode().value());
@@ -189,26 +192,5 @@ public class SAPInboundInterface {
         }
 
         return resultMap;
-    }
-
-    // SFDC Call을 위한 Header는 고정
-    private HttpHeaders makeHeadersSFDC() {
-        HttpHeaders header = new HttpHeaders();
-        header.set("Authorization", "Bearer " + tokenManager.getApiToken());
-        header.set("Content-Type", HeaderTypeList.APPLICATION_JSON);
-
-        return header;
-    }
-
-    // Generic Type을통한 Response Type 동적설정
-    @SuppressWarnings("unchecked")
-    private <T> ParameterizedTypeReference<T> getResponseType(Object responseType) {
-        if (responseType instanceof Class) {
-            return ParameterizedTypeReference.forType((Class<T>) responseType);
-        } else if (responseType instanceof ParameterizedTypeReference) {
-            return (ParameterizedTypeReference<T>) responseType;
-        } else {
-            throw new IllegalArgumentException("Unsupported response type: " + responseType);
-        }
     }
 }

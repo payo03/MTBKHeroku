@@ -7,7 +7,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -23,7 +22,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.heroku.java.Config.HeaderTypeList;
 
 @RestController
 @RequestMapping("/api/sap")
@@ -86,7 +84,7 @@ public class SAPOutboundInterface {
             .pathSegment(PATH_ES004);
             
         // Header
-        HttpHeaders headers = makeHeadersSAP();
+        HttpHeaders headers = InterfaceCommon.makeHeadersSAP();
         // Request Info
         HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, headers);
 
@@ -103,7 +101,7 @@ public class SAPOutboundInterface {
             .pathSegment(PATH_ES007);
             
         // Header
-        HttpHeaders headers = makeHeadersSAP();
+        HttpHeaders headers = InterfaceCommon.makeHeadersSAP();
         // Request Info
         HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, headers);
 
@@ -120,7 +118,7 @@ public class SAPOutboundInterface {
             .pathSegment(PATH_ES010);
             
         // Header
-        HttpHeaders headers = makeHeadersSAP();
+        HttpHeaders headers = InterfaceCommon.makeHeadersSAP();
         // Request Info
         HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, headers);
 
@@ -137,7 +135,7 @@ public class SAPOutboundInterface {
             .pathSegment(PATH_ES011);
             
         // Header
-        HttpHeaders headers = makeHeadersSAP();
+        HttpHeaders headers = InterfaceCommon.makeHeadersSAP();
         // Request Info
         HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, headers);
 
@@ -154,7 +152,7 @@ public class SAPOutboundInterface {
             .pathSegment(PATH_ES013);
             
         // Header
-        HttpHeaders headers = makeHeadersSAP();
+        HttpHeaders headers = InterfaceCommon.makeHeadersSAP();
         // Request Info
         HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, headers);
 
@@ -171,7 +169,7 @@ public class SAPOutboundInterface {
             .pathSegment(PATH_ES018);
             
         // Header
-        HttpHeaders headers = makeHeadersSAP();
+        HttpHeaders headers = InterfaceCommon.makeHeadersSAP();
         // Request Info
         HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, headers);
 
@@ -199,7 +197,7 @@ public class SAPOutboundInterface {
                 URIBuilder.toUriString(),
                 HttpMethod.POST,
                 requestEntity,
-                getResponseType(responseType)
+                InterfaceCommon.getResponseType(responseType)
             );
 
             resultMap.put("status_code", response.getStatusCode().value());
@@ -230,25 +228,5 @@ public class SAPOutboundInterface {
         }
 
         return resultMap;
-    }
-
-    // Header Setting
-    public static HttpHeaders makeHeadersSAP() {
-        HttpHeaders header = new HttpHeaders();
-        header.set("Content-Type", HeaderTypeList.APPLICATION_JSON);
-
-        return header;
-    }
-
-    // Generic Type을통한 Response Type 동적설정
-    @SuppressWarnings("unchecked")
-    private <T> ParameterizedTypeReference<T> getResponseType(Object responseType) {
-        if (responseType instanceof Class) {
-            return ParameterizedTypeReference.forType((Class<T>) responseType);
-        } else if (responseType instanceof ParameterizedTypeReference) {
-            return (ParameterizedTypeReference<T>) responseType;
-        } else {
-            throw new IllegalArgumentException("Unsupported response type: " + responseType);
-        }
     }
 }
