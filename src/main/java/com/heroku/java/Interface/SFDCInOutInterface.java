@@ -207,7 +207,7 @@ public class SFDCInOutInterface {
         
         Map<String, Object> resultMap = new HashMap<String, Object>();
         resultMap.put("code", true);
-        resultMap.put("message", jsonString);
+        resultMap.put("message", "Great. you\'ve got " + ((int) (Math.random() * 100)) + " points");
 
         // URL
         String SAP_URL = System.getenv("SAP_URL");
