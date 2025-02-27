@@ -55,6 +55,7 @@ public class SFDCInOutInterface {
 
     private static final String PATH_ES009 = "sms009";
     private static final String PATH_ES010 = "sms010";
+    private static final String PATH_ES011 = "sms011";
 
     @Autowired
     @Qualifier("defaultRestTemplate")
@@ -269,6 +270,43 @@ public class SFDCInOutInterface {
             .pathSegment(URL_SAP)
             .pathSegment(URL_ASYNC)
             .pathSegment(PATH_ES010);
+
+        asyncService.AsyncDoCallOutSAP(String.class, URIBuilderSAP, URIBuilderSFDC, requestEntity, idList);
+        return resultMap;
+    }
+
+    @PostMapping("/sap/async/sms011")
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> asyncSMS011(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody String jsonString) throws Exception {
+        logger.info("\n{}", jsonString);
+        
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        resultMap.put("code", true);
+        resultMap.put("message", "Great. you\'ve got " + ((int) (Math.random() * 100)) + " points");
+
+        Map<String, Object> jsonMap = InterfaceCommon.extractJSON(jsonString);
+        List<String> idList = (List<String>) jsonMap.get("idList");
+        String parseString = (String) jsonMap.get("parseString");
+        
+        // URL
+        String SAP_URL = System.getenv("SAP_URL");
+        UriComponentsBuilder URIBuilderSAP = UriComponentsBuilder.fromHttpUrl(SAP_URL)
+            .pathSegment(PATH_ES011);
+            
+        // Header
+        HttpHeaders headers = InterfaceCommon.makeHeadersSAP();
+        // Request Info
+        HttpEntity<String> requestEntity = new HttpEntity<>(parseString, headers);
+
+        // URL
+        String SFDCURL = Optional.ofNullable(System.getenv("SFDC_URL"))
+            .orElse("https://app-force-1035--partial.sandbox.my.salesforce.com/services");
+        UriComponentsBuilder URIBuilderSFDC = UriComponentsBuilder.fromHttpUrl(SFDCURL)
+            .pathSegment(URL_APEXREST)
+            .pathSegment(URL_API)
+            .pathSegment(URL_SAP)
+            .pathSegment(URL_ASYNC)
+            .pathSegment(PATH_ES011);
 
         asyncService.AsyncDoCallOutSAP(String.class, URIBuilderSAP, URIBuilderSFDC, requestEntity, idList);
         return resultMap;
