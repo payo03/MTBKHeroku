@@ -15,6 +15,8 @@ public class RateLimitConfig {
     private Long lastRequestTime = null;
 
     public boolean isRequestAllowed(HttpServletRequest request) {
+        Boolean isPass = false;
+
         String serverName = request.getServerName();
         long currentTime = System.currentTimeMillis();
         lastRequestTime = requestMap.get(serverName);
@@ -23,14 +25,18 @@ public class RateLimitConfig {
         if (lastRequestTime == null || currentTime - lastRequestTime > THRESHOLD_TIME) {
             requestMap.put(serverName, currentTime);
 
-            return true; // 요청 허용
+            isPass = true; // 요청 허용
         }
         
         String requestURI = request.getRequestURI();
         for (String path : STATIC_PATHS) {
-            if (requestURI.startsWith(path)) return true;
+
+            // WhiteList 경로는 PASS
+            if (requestURI.startsWith(path)) {
+                isPass = true;  // 요청 허용
+            }
         }
 
-        return false; // 요청 차단
+        return isPass;
     }
 }
