@@ -32,7 +32,7 @@ public class RateLimitConfig {
         for (String path : STATIC_PATHS) {
 
             // WhiteList 경로는 PASS
-            if (requestURI.startsWith(path)) {
+            if (requestURI.contains(path)) {
                 isPass = true;  // 요청 허용
             }
         }
