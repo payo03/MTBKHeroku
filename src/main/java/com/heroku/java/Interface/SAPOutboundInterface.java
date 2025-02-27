@@ -30,7 +30,6 @@ public class SAPOutboundInterface {
 
     private static final String SAP_HEALTHCHECK = "GetTest";
     private static final String PATH_ES001 = "SMS001";
-    private static final String PATH_ES004 = "SMS004";
     private static final String PATH_ES007 = "SMS007";
     private static final String PATH_ES018 = "SMS018";
 
@@ -80,23 +79,6 @@ public class SAPOutboundInterface {
         String SAP_URL = System.getenv("SAP_URL");
         UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SAP_URL)
             .pathSegment(PATH_ES001);
-            
-        // Header
-        HttpHeaders headers = InterfaceCommon.makeHeadersSAP();
-        // Request Info
-        HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, headers);
-
-        return doCallOutSAP(String.class, URIBuilder, requestEntity);
-    }
-
-    @PostMapping("/sms004")
-    public Map<String, Object> sms004(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody String jsonString) {
-        logger.info("\n{}", jsonString);
-
-        // URL
-        String SAP_URL = System.getenv("SAP_URL");
-        UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SAP_URL)
-            .pathSegment(PATH_ES004);
             
         // Header
         HttpHeaders headers = InterfaceCommon.makeHeadersSAP();
