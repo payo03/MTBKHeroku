@@ -216,7 +216,7 @@ public class SFDCInOutInterface {
         // URL
         String SAP_URL = System.getenv("SAP_URL");
         UriComponentsBuilder URIBuilderSAP = UriComponentsBuilder.fromHttpUrl(SAP_URL)
-            .pathSegment(PATH_ES010);
+            .pathSegment(PATH_ES009);
             
         // Header
         HttpHeaders headers = InterfaceCommon.makeHeadersSAP();
