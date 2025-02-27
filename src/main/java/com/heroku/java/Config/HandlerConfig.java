@@ -30,10 +30,10 @@ public class HandlerConfig implements WebMvcConfigurer {
         // API요청은 1초에 2번(해제)
         registry.addInterceptor(rateLimitInterceptor)
                 .excludePathPatterns(
-                        "/swagger-ui/**",      // Swagger UI 정적 리소스 제외
-                        "/v3/api-docs/**",     // Swagger API 문서 제외
-                        "/stylesheets/**",     // 정적 CSS
-                        "/images/**",          // 정적 이미지
+                        "/swagger-ui/**",   // Swagger UI 정적 리소스
+                        "/v3/api-docs/**",              // Swagger API 문서
+                        "/stylesheets/**",              // 정적 CSS
+                        "/images/**",                   // 정적 이미지
                         "/error"
                 );
     }
