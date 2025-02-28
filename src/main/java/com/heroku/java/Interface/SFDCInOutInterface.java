@@ -32,6 +32,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -202,6 +203,7 @@ public class SFDCInOutInterface {
         }
     }
     
+    /*
     @PostMapping("/sap/async/sms004")
     @SuppressWarnings("unchecked")
     public Map<String, Object> asyncSMS004(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody String jsonString) throws Exception {
@@ -347,6 +349,53 @@ public class SFDCInOutInterface {
             .pathSegment(PATH_ES011);
 
         asyncService.AsyncDoCallOutSAP(String.class, URIBuilderSAP, URIBuilderSFDC, requestEntity, idList);
+        return resultMap;
+    } 
+    */
+
+    @PostMapping("/sap/async/{path}")
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> handleAsyncRequest(
+            @RequestHeader(value = "X-API-KEY", required = true) String apiKey,
+            @PathVariable(name = "path", required = true) String path,
+            @RequestBody String jsonString
+    ) throws Exception {
+        logger.info("#############################################");
+        logger.info("Processing async request for path: {}", path);
+        logger.info("\n{}", jsonString);
+        logger.info("#############################################");
+
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("code", true);
+        resultMap.put("message", "Great. you\'ve got " + ((int) (Math.random() * 100)) + " points");
+
+        // JSON 파싱
+        Map<String, Object> jsonMap = InterfaceCommon.extractJSON(jsonString);
+        List<String> idList = (List<String>) jsonMap.get("idList");
+        String parseString = (String) jsonMap.get("parseString");
+
+        // URL 설정
+        String SAP_URL = System.getenv("SAP_URL");
+        UriComponentsBuilder URIBuilderSAP = UriComponentsBuilder.fromHttpUrl(SAP_URL)
+            .pathSegment(path);
+
+        // 헤더 설정
+        HttpHeaders headers = InterfaceCommon.makeHeadersSAP();
+        HttpEntity<String> requestEntity = new HttpEntity<>(parseString, headers);
+
+        // SFDC URL 설정
+        String SFDCURL = Optional.ofNullable(System.getenv("SFDC_URL"))
+            .orElse("https://app-force-1035--partial.sandbox.my.salesforce.com/services");
+        UriComponentsBuilder URIBuilderSFDC = UriComponentsBuilder.fromHttpUrl(SFDCURL)
+            .pathSegment(URL_APEXREST)
+            .pathSegment(URL_API)
+            .pathSegment(URL_SAP)
+            .pathSegment(URL_ASYNC)
+            .pathSegment(path);
+
+        // 비동기 요청 처리
+        asyncService.AsyncDoCallOutSAP(String.class, URIBuilderSAP, URIBuilderSFDC, requestEntity, idList);
+
         return resultMap;
     }
 }
