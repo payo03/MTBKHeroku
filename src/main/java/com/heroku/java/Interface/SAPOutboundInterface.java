@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -71,6 +72,7 @@ public class SAPOutboundInterface {
         return text;
     }
 
+    /*
     @PostMapping("/sms001")
     public Map<String, Object> sms001(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody String jsonString) {
         logger.info("\n{}", jsonString);
@@ -106,7 +108,7 @@ public class SAPOutboundInterface {
     }
 
     @PostMapping("/sms018")
-    public Map<String, Object> sms018(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody String jsonString) throws JsonProcessingException {
+    public Map<String, Object> sms018(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody String jsonString) {
         logger.info("\n{}", jsonString);
 
         // URL
@@ -119,6 +121,31 @@ public class SAPOutboundInterface {
         // Request Info
         HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, headers);
 
+        return doCallOutSAP(String.class, URIBuilder, requestEntity);
+    }
+    */
+
+    @PostMapping("/{path}")
+    public Map<String, Object> handleSAPRequest(
+            @RequestHeader(value = "X-API-KEY", required = true) String apiKey,
+            @PathVariable(name = "path", required = true) String path,
+            @RequestBody String jsonString
+    ) {
+        logger.info("#############################################");
+        logger.info("Processing SAP request for path: {}", path);
+        logger.info("Request Body: {}", jsonString);
+        logger.info("#############################################");
+
+        // URL 설정
+        String SAP_URL = System.getenv("SAP_URL");
+        UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SAP_URL)
+                .pathSegment(path);
+
+        // 헤더 설정
+        HttpHeaders headers = InterfaceCommon.makeHeadersSAP();
+        HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, headers);
+
+        // API 호출
         return doCallOutSAP(String.class, URIBuilder, requestEntity);
     }
 
