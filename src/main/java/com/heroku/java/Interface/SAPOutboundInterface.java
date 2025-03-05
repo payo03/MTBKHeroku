@@ -134,6 +134,10 @@ public class SAPOutboundInterface {
         logger.info("Request Body: {}", jsonString);
         logger.info("#############################################");
 
+        // JSON 파싱
+        Map<String, Object> jsonMap = InterfaceCommon.extractJSON(jsonString);
+        String parseString = (String) jsonMap.get("parseString");
+        
         // URL 설정
         String SAP_URL = System.getenv("SAP_URL");
         UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SAP_URL)
@@ -141,7 +145,7 @@ public class SAPOutboundInterface {
 
         // 헤더 설정
         HttpHeaders headers = InterfaceCommon.makeHeadersSAP();
-        HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, headers);
+        HttpEntity<String> requestEntity = new HttpEntity<>(parseString, headers);
 
         // API 호출
         return doCallOutSAP(String.class, URIBuilder, requestEntity);

@@ -6,15 +6,15 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+// import com.fasterxml.jackson.databind.JsonNode;
+// import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heroku.java.Config.HeaderTypeList;
 import com.heroku.java.DTO.FetchTemplateRequest;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
+// import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -42,9 +42,11 @@ import org.springframework.web.bind.annotation.RequestHeader;
 public class SFDCInOutInterface {
     private static final Logger logger = LogManager.getLogger(SFDCInOutInterface.class);
 
+    /*
     private static final List<String> KAKAO_WHITE_LIST = Arrays.asList(
         Optional.ofNullable(System.getenv("KAKAO_WHITE_LIST")).orElse("0").split(",")
     );
+    */
 
     @Autowired
     private AsyncService asyncService;
@@ -54,10 +56,10 @@ public class SFDCInOutInterface {
     private static final String URL_SAP = "sap";
     private static final String URL_ASYNC = "async";
 
-    private static final String PATH_ES004 = "sms004";
-    private static final String PATH_ES009 = "sms009";
-    private static final String PATH_ES010 = "sms010";
-    private static final String PATH_ES011 = "sms011";
+    // private static final String PATH_ES004 = "sms004";
+    // private static final String PATH_ES009 = "sms009";
+    // private static final String PATH_ES010 = "sms010";
+    // private static final String PATH_ES011 = "sms011";
 
     @Autowired
     @Qualifier("defaultRestTemplate")
@@ -69,10 +71,10 @@ public class SFDCInOutInterface {
         resultMap.put("code", true);
         resultMap.put("message", "Great. you\'ve got " + ((int) (Math.random() * 100)) + " points");
 
+        /* 
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(jsonString);
         JsonNode destinations = jsonNode.path("messages").get(0).path("destinations");
-        /* 
         // WHITE LIST ON_OFF
         for (JsonNode destinationNode : destinations) {
             String destination = destinationNode.path("to").asText();
