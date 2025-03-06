@@ -23,6 +23,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.heroku.java.Config.SFDCTokenManager;
+import com.heroku.java.DTO.OffsetProcess;
 import com.heroku.java.DTO.PaymentInfo;
 import com.heroku.java.DTO.Stock;
 
@@ -38,6 +39,7 @@ public class SAPInboundInterface {
     private static final String PATH_ES014 = "sms014";
     private static final String PATH_ES005 = "sms005";
     private static final String PATH_ES019 = "sms019";
+    private static final String PATH_ES021 = "sms021";
 
     @Autowired
     @Qualifier("defaultRestTemplate")
@@ -48,7 +50,9 @@ public class SAPInboundInterface {
 
     @PostMapping("/sms005")
     public Map<String, Object> sms004(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody Stock request) {
-        logger.info("\n{}", request);
+        logger.info("#############################################");
+        logger.info("SUCCESS. Request {}", request);
+        logger.info("#############################################");
 
         // URL
         String SFDCURL = Optional.ofNullable(System.getenv("SFDC_URL"))
@@ -59,10 +63,6 @@ public class SAPInboundInterface {
             .pathSegment(URL_SAP)
             .pathSegment(PATH_ES005);
 
-        logger.info("#############################################");
-        logger.info("SUCCESS. Request {}", request);
-        logger.info("#############################################");
-
         // Header
         String token = tokenManager.getApiToken();
         HttpHeaders headers = InterfaceCommon.makeHeadersSFDC(token);
@@ -70,6 +70,61 @@ public class SAPInboundInterface {
         HttpEntity<Stock> requestEntity = new HttpEntity<>(request, headers);
 
         return doCallOutSFDC(new ParameterizedTypeReference<Map<String, Object>>() {}, URIBuilder, requestEntity);
+    }
+
+    @PostMapping("/sms019")
+    public Map<String, Object> sms019(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody PaymentInfo request) {
+        logger.info("#############################################");
+        logger.info("SUCCESS. Request {}", request);
+        logger.info("#############################################");
+
+        // URL
+        String SFDCURL = Optional.ofNullable(System.getenv("SFDC_URL"))
+            .orElse("https://app-force-1035--partial.sandbox.my.salesforce.com/services");
+        UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SFDCURL)
+            .pathSegment(URL_APEXREST)
+            .pathSegment(URL_API)
+            .pathSegment(URL_SAP)
+            .pathSegment(PATH_ES019);
+
+        // Header
+        String token = tokenManager.getApiToken();
+        HttpHeaders headers = InterfaceCommon.makeHeadersSFDC(token);
+        // Request Info
+        HttpEntity<PaymentInfo> requestEntity = new HttpEntity<>(request, headers);
+
+        return doCallOutSFDC(new ParameterizedTypeReference<Map<String, Object>>() {}, URIBuilder, requestEntity);
+    }
+
+    @PostMapping("/sms021")
+    public Map<String, Object> sms021(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody OffsetProcess request) {
+        logger.info("#############################################");
+        logger.info("SUCCESS. Request {}", request);
+        logger.info("#############################################");
+
+        // URL
+        String SFDCURL = Optional.ofNullable(System.getenv("SFDC_URL"))
+            .orElse("https://app-force-1035--partial.sandbox.my.salesforce.com/services");
+        UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SFDCURL)
+            .pathSegment(URL_APEXREST)
+            .pathSegment(URL_API)
+            .pathSegment(URL_SAP)
+            .pathSegment(PATH_ES021);
+
+        // Header
+        String token = tokenManager.getApiToken();
+        HttpHeaders headers = InterfaceCommon.makeHeadersSFDC(token);
+        // Request Info
+        HttpEntity<OffsetProcess> requestEntity = new HttpEntity<>(request, headers);
+
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        resultMap.put("code", true);
+        resultMap.put("message", "Great. you\'ve got " + ((int) (Math.random() * 100)) + " points");
+        resultMap.put("status_code", 200);
+        resultMap.put("request_body", request);
+
+        return resultMap;
+        // return doCallOutSFDC(new ParameterizedTypeReference<Map<String, Object>>() {}, URIBuilder, requestEntity);
     }
 
     @PostMapping("/sms014")
@@ -92,32 +147,6 @@ public class SAPInboundInterface {
         HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, headers);
 
         return doCallOutSFDC(String.class, URIBuilder, requestEntity);
-    }
-
-    @PostMapping("/sms019")
-    public Map<String, Object> sms019(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody PaymentInfo request) {
-        logger.info("\n{}", request);
-
-        // URL
-        String SFDCURL = Optional.ofNullable(System.getenv("SFDC_URL"))
-            .orElse("https://app-force-1035--partial.sandbox.my.salesforce.com/services");
-        UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SFDCURL)
-            .pathSegment(URL_APEXREST)
-            .pathSegment(URL_API)
-            .pathSegment(URL_SAP)
-            .pathSegment(PATH_ES019);
-
-        logger.info("#############################################");
-        logger.info("SUCCESS. Request {}", request);
-        logger.info("#############################################");
-
-        // Header
-        String token = tokenManager.getApiToken();
-        HttpHeaders headers = InterfaceCommon.makeHeadersSFDC(token);
-        // Request Info
-        HttpEntity<PaymentInfo> requestEntity = new HttpEntity<>(request, headers);
-
-        return doCallOutSFDC(new ParameterizedTypeReference<Map<String, Object>>() {}, URIBuilder, requestEntity);
     }
 
     /*

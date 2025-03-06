@@ -22,17 +22,15 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 @RestController
 @RequestMapping("/api/sap")
 public class SAPOutboundInterface {
     private static final Logger logger = LogManager.getLogger(SAPOutboundInterface.class);
 
     private static final String SAP_HEALTHCHECK = "GetTest";
-    private static final String PATH_ES001 = "SMS001";
-    private static final String PATH_ES007 = "SMS007";
-    private static final String PATH_ES018 = "SMS018";
+    // private static final String PATH_ES001 = "SMS001";
+    // private static final String PATH_ES007 = "SMS007";
+    // private static final String PATH_ES018 = "SMS018";
 
     @Autowired
     @Qualifier("defaultRestTemplate")
@@ -136,6 +134,10 @@ public class SAPOutboundInterface {
         logger.info("Request Body: {}", jsonString);
         logger.info("#############################################");
 
+        // JSON 파싱
+        Map<String, Object> jsonMap = InterfaceCommon.extractJSON(jsonString);
+        String parseString = (String) jsonMap.get("parseString");
+        
         // URL 설정
         String SAP_URL = System.getenv("SAP_URL");
         UriComponentsBuilder URIBuilder = UriComponentsBuilder.fromHttpUrl(SAP_URL)
@@ -143,7 +145,7 @@ public class SAPOutboundInterface {
 
         // 헤더 설정
         HttpHeaders headers = InterfaceCommon.makeHeadersSAP();
-        HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, headers);
+        HttpEntity<String> requestEntity = new HttpEntity<>(parseString, headers);
 
         // API 호출
         return doCallOutSAP(String.class, URIBuilder, requestEntity);
