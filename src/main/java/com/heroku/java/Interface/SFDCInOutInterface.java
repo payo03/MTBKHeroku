@@ -17,7 +17,6 @@ import java.io.UnsupportedEncodingException;
 // import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -356,7 +355,6 @@ public class SFDCInOutInterface {
     */
 
     @PostMapping("/sap/async/{path}")
-    @SuppressWarnings("unchecked")
     public Map<String, Object> handleAsyncRequest(
             @RequestHeader(value = "X-API-KEY", required = true) String apiKey,
             @PathVariable(name = "path", required = true) String path,
