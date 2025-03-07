@@ -6,15 +6,12 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-// import com.fasterxml.jackson.databind.JsonNode;
-// import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heroku.java.Config.HeaderTypeList;
 import com.heroku.java.DTO.FetchTemplateRequest;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-// import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
