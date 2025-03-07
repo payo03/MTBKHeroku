@@ -52,18 +52,18 @@ public class InterfaceCommon {
         try{
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonNode = mapper.readTree(paramString);
-            JsonNode idListNode = jsonNode.get("ID_LIST");
-            List<String> idList = mapper.convertValue(idListNode, new TypeReference<List<String>>() {});
+            JsonNode logIdNode = jsonNode.get("LOG_ID");
+            String logId = logIdNode != null ? logIdNode.asText() : null;
 
             if (jsonNode.isObject()) {
-                ((ObjectNode) jsonNode).remove("ID_LIST");
+                ((ObjectNode) jsonNode).remove("LOG_ID");
             }
             String parseString = mapper.writeValueAsString(jsonNode);
 
-            returnMap.put("idList", idList);
+            returnMap.put("logId", logId);
             returnMap.put("parseString", parseString);
         } catch (Exception e) {
-            returnMap.put("idList", new ArrayList<String>());
+            returnMap.put("logId", "");
             returnMap.put("parseString", paramString);
         }
 
@@ -83,40 +83,40 @@ public class InterfaceCommon {
         }
 
         // ID_LIST에 들어갈 ArrayNode 생성
-        ArrayNode idListNode = mapper.createArrayNode();
+        ArrayNode logIdNode = mapper.createArrayNode();
         if (obj instanceof List) {
             List<?> list = (List<?>) obj;
             for (Object item : list) {
                 if (item instanceof Map) {
                     JsonNode mapNode = mapper.valueToTree(item);
-                    idListNode.add(mapNode);
+                    logIdNode.add(mapNode);
                 } else if (item instanceof Boolean) {
-                    idListNode.add((Boolean) item);
+                    logIdNode.add((Boolean) item);
                 } else if (item instanceof String) {
-                    idListNode.add((String) item);
+                    logIdNode.add((String) item);
                 } else {
-                    idListNode.add(item != null ? item.toString() : "null");
+                    logIdNode.add(item != null ? item.toString() : "null");
                 }
             }
         } else if (obj instanceof Map) {
             JsonNode mapNode = mapper.valueToTree(obj);
-            idListNode.add(mapNode);
+            logIdNode.add(mapNode);
         } else if (obj instanceof Boolean) {
-            idListNode.add((Boolean) obj);
+            logIdNode.add((Boolean) obj);
         } else if (obj instanceof String) {
-            idListNode.add((String) obj);
+            logIdNode.add((String) obj);
         } else {
-            idListNode.add(obj != null ? obj.toString() : "null");
+            logIdNode.add(obj != null ? obj.toString() : "null");
         }
 
         // rootNode가 ObjectNode이면 직접 필드를 추가, 그렇지 않으면 새 ObjectNode에 감싸서 추가
         if (rootNode.isObject()) {
-            ((ObjectNode) rootNode).set("ID_LIST", idListNode);
+            ((ObjectNode) rootNode).set("LOG_ID", logIdNode);
         } else {
             ObjectNode newNode = mapper.createObjectNode();
             
             newNode.set("data", rootNode);
-            newNode.set("ID_LIST", idListNode);
+            newNode.set("LOG_ID", logIdNode);
             rootNode = newNode;
         }
 

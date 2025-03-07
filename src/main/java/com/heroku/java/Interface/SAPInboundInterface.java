@@ -123,8 +123,8 @@ public class SAPInboundInterface {
         resultMap.put("status_code", 200);
         resultMap.put("request_body", request);
 
-        return resultMap;
-        // return doCallOutSFDC(new ParameterizedTypeReference<Map<String, Object>>() {}, URIBuilder, requestEntity);
+        // return resultMap;
+        return doCallOutSFDC(new ParameterizedTypeReference<Map<String, Object>>() {}, URIBuilder, requestEntity);
     }
 
     @PostMapping("/sms014")

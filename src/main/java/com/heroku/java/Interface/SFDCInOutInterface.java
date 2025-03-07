@@ -373,7 +373,7 @@ public class SFDCInOutInterface {
 
         // JSON 파싱
         Map<String, Object> jsonMap = InterfaceCommon.extractJSON(jsonString);
-        List<String> idList = (List<String>) jsonMap.get("idList");
+        String logId = (String) jsonMap.get("logId");
         String parseString = (String) jsonMap.get("parseString");
 
         // URL 설정
@@ -396,7 +396,7 @@ public class SFDCInOutInterface {
             .pathSegment(path);
 
         // 비동기 요청 처리
-        asyncService.AsyncDoCallOutSAP(String.class, URIBuilderSAP, URIBuilderSFDC, requestEntity, idList);
+        asyncService.AsyncDoCallOutSAP(String.class, URIBuilderSAP, URIBuilderSFDC, requestEntity, logId);
 
         return resultMap;
     }
