@@ -28,7 +28,8 @@ public class AsyncService {
     private SFDCTokenManager tokenManager;
 
     @Async
-    public <T> void AsyncDoCallOutSAP(Object responseType, UriComponentsBuilder URIBuilderSAP, UriComponentsBuilder URIBuilderSFDC, HttpEntity<T> requestEntity, Object returnObj) {
+    public <T> void AsyncDoCallOutSAP(Object responseType, UriComponentsBuilder URIBuilderSAP,
+            UriComponentsBuilder URIBuilderSFDC, HttpEntity<T> requestEntity, Object returnObj) {
         logger.info("#############################################");
         logger.info("Endpoint URL. {}", URIBuilderSAP.toUriString());
         logger.info("#############################################");
@@ -38,18 +39,18 @@ public class AsyncService {
         try {
             // 1. SAP API CALL
             responseEntity = restTemplate.exchange(
-                URIBuilderSAP.toUriString(),
-                HttpMethod.POST,
-                requestEntity,
-                InterfaceCommon.getResponseType(responseType)
-            );
+                    URIBuilderSAP.toUriString(),
+                    HttpMethod.POST,
+                    requestEntity,
+                    InterfaceCommon.getResponseType(responseType));
             responseBody = responseEntity.getBody();
-            if(returnObj != null) responseBody = InterfaceCommon.parseJSONNode(responseBody, returnObj);
+            if (returnObj != null)
+                responseBody = InterfaceCommon.parseJSONNode(responseBody, returnObj);
 
             logger.info("#############################################");
             logger.info("SUCCESS. Request {}. SAP: {}", requestEntity.getBody(), responseBody);
             logger.info("#############################################");
-            
+
             // 2. SFDC API CALL
             // Header
             String token = tokenManager.getApiToken();
@@ -57,11 +58,10 @@ public class AsyncService {
             // Request Info
             HttpEntity<T> requestEntitySFDC = new HttpEntity<>(responseBody, headers);
             ResponseEntity<T> responseEntitySFDC = restTemplate.exchange(
-                URIBuilderSFDC.toUriString(),
-                HttpMethod.POST,
-                requestEntitySFDC,
-                InterfaceCommon.getResponseType(responseType)
-            );
+                    URIBuilderSFDC.toUriString(),
+                    HttpMethod.POST,
+                    requestEntitySFDC,
+                    InterfaceCommon.getResponseType(responseType));
 
             logger.info("#############################################");
             logger.info("SUCCESS. Request {}. SFDC: {}", requestEntitySFDC.getBody(), responseEntitySFDC.getBody());
@@ -74,20 +74,20 @@ public class AsyncService {
             String token = tokenManager.getApiToken();
             HttpHeaders newHeaders = InterfaceCommon.makeHeadersSFDC(token);
             HttpEntity<T> newRequestEntitySFDC = new HttpEntity<>(responseBody, newHeaders);
-    
+
             ResponseEntity<T> newResponseEntitySFDC = restTemplate.exchange(
-                URIBuilderSFDC.toUriString(),
-                HttpMethod.POST,
-                newRequestEntitySFDC,
-                InterfaceCommon.getResponseType(responseType)
-            );
+                    URIBuilderSFDC.toUriString(),
+                    HttpMethod.POST,
+                    newRequestEntitySFDC,
+                    InterfaceCommon.getResponseType(responseType));
 
             logger.info("#############################################");
-            logger.info("SUCCESS(Refresh Token). Request {}. SFDC: {}", newRequestEntitySFDC.getBody(), newResponseEntitySFDC.getBody());
+            logger.info("SUCCESS(Refresh Token). Request {}. SFDC: {}", newRequestEntitySFDC.getBody(),
+                    newResponseEntitySFDC.getBody());
             logger.info("#############################################");
         } catch (HttpClientErrorException e) {
             // HTTP 에러 처리
-        
+
             logger.error("#############################################");
             logger.error("Error. Request {}. SAP: {}", requestEntity.getBody(), e.getResponseBodyAsString());
             logger.error("#############################################");

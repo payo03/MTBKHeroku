@@ -22,7 +22,7 @@ public class RestTemplateConfig {
         try {
             // 1. Heroku Config. Quotaguard 프록시 URL 가져오기
             String staticURL = System.getenv("QUOTAGUARDSTATIC_URL");
-            if(staticURL != null) {
+            if (staticURL != null) {
                 URL proxyURL = new URI(staticURL).toURL();
                 logger.info("#############################################");
                 logger.info("### Proxy URL: " + proxyURL + " ###");
@@ -52,7 +52,7 @@ public class RestTemplateConfig {
                 logger.info("#############################################");
                 logger.info(template.getForObject("http://ip.quotaguard.com", String.class));
                 logger.info("#############################################");
-                
+
                 return template;
             } else {
                 return new RestTemplate();
@@ -64,11 +64,11 @@ public class RestTemplateConfig {
 
     @Bean("vpnRestClient")
     RestClient vpnRestClient(@Qualifier("defaultRestTemplate") RestTemplate defaultRestTemplate) {
-        
+
         try {
             // 1. Heroku Config. VPN URL 가져오기
             String vpnGWURL = System.getenv("VPN_GW_URL");
-            if(vpnGWURL != null) {
+            if (vpnGWURL != null) {
                 URL proxyURL = new URI(vpnGWURL).toURL();
                 logger.info("#############################################");
                 logger.info("### VPN URL: " + proxyURL + " ###");
@@ -91,7 +91,7 @@ public class RestTemplateConfig {
                     String auth = user + ":" + password;
                     String encodedAuth = java.util.Base64.getEncoder().encodeToString(auth.getBytes());
                     request.getHeaders().add("Proxy-Authorization", "Basic " + encodedAuth);
-                    
+
                     return execution.execute(request, body);
                 });
                 RestClient client = RestClient.create(defaultRestTemplate);
