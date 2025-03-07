@@ -20,7 +20,7 @@ dependencies {
     implementation("org.apache.pdfbox:pdfbox:2.0.27")
     implementation("org.seleniumhq.selenium:selenium-java:4.8.0")
     implementation("org.seleniumhq.selenium:selenium-chrome-driver:4.8.0")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5")
 
     compileOnly("org.projectlombok:lombok:1.18.30")
     annotationProcessor("org.projectlombok:lombok:1.18.30")
