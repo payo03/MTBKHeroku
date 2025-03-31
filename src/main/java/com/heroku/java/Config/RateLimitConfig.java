@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RateLimitConfig {
 
     private static final long THRESHOLD_TIME = 500; // 0.5초
-    private static final String[] STATIC_PATHS = {"/stylesheets/", "/images/", "/favicon.ico", "/sap"};
+    private static final String[] STATIC_PATHS = {"/stylesheets/", "/images/", "/favicon.ico", "/sap", "kakao", "pages", "wsmoka"};
 
     private ConcurrentHashMap<String, Long> requestMap = new ConcurrentHashMap<>();
     private Long lastRequestTime = null;
