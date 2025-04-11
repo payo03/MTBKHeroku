@@ -35,8 +35,7 @@ public class SAPInboundInterface {
     private static final String URL_APEXREST = "apexrest";
     private static final String URL_API = "api";
     private static final String URL_SAP = "sap";
-
-    // Test
+    
     // private static final String PATH_ES005 = "sms005";
     // private static final String PATH_ES014 = "sms014";
     private static final String PATH_ES019 = "sms019";
