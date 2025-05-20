@@ -72,6 +72,7 @@ public class SAPInboundInterface {
         return doCallOutSFDC(new ParameterizedTypeReference<Map<String, Object>>() {}, URIBuilder, requestEntity);
     }
 
+    /*
     @PostMapping("/sms021")
     public Map<String, Object> sms021(@RequestHeader(value="X-API-KEY", required = true) String apiKey, @RequestBody OffsetProcess request) {
         logger.info("#############################################");
@@ -102,6 +103,7 @@ public class SAPInboundInterface {
         return resultMap;
         // return doCallOutSFDC(new ParameterizedTypeReference<Map<String, Object>>() {}, URIBuilder, requestEntity);
     }
+    */
 
     /*
     @PostMapping("/sms005")
